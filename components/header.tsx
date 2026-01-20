@@ -30,7 +30,7 @@ export function Header() {
     setOpenDropdown(openDropdown === name ? null : name)
   }
 
-  const { cart, wishlist, cartTotal, user } = useCart()
+  const { cart, wishlist, cartTotal } = useCart()
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b">
@@ -393,16 +393,7 @@ export function Header() {
         </div>
       </div>
 
-      {/* Debug Banner - Temporary for troubleshooting */}
-      {user ? (
-        <div className="bg-green-600 text-white text-xs py-1 text-center font-mono">
-          DEBUG: Logged In as {user.email} | ID: {user.id.slice(0, 8)}...
-        </div>
-      ) : (
-        <div className="bg-red-600 text-white text-xs py-1 text-center font-mono animate-pulse">
-          DEBUG: NOT LOGGED IN - Please Click "User Icon" to Login
-        </div>
-      )}
+
 
       {/* Shipping Banner */}
       <Link href="/shipment">
