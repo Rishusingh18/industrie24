@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createClient } from "@/lib/supabase/client"
 
 export interface CartItemData {
   id: number
@@ -29,29 +30,89 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItemData[]>([])
   const [wishlist, setWishlist] = useState<CartItemData[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
+  const [user, setUser] = useState<any>(null)
 
-  // Load from localStorage on mount
+  const supabase = createClient()
+
+  // 1. Check for user session
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart")
-    const savedWishlist = localStorage.getItem("wishlist")
-    if (savedCart) setCart(JSON.parse(savedCart))
-    if (savedWishlist) setWishlist(JSON.parse(savedWishlist))
-    setIsLoaded(true)
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
 
-  // Save to localStorage whenever cart changes
+  // 2. Fetch data (DB if logged in, LocalStorage if not)
   useEffect(() => {
-    if (isLoaded) {
+    const loadData = async () => {
+      if (user) {
+        // Fetch Cart
+        const { data: cartData } = await supabase
+          .from("cart_items")
+          .select("quantity, product:products(id, name, price, image_url)")
+
+        if (cartData) {
+          const formattedCart = cartData.map((item: any) => ({
+            id: item.product.id,
+            name: item.product.name,
+            price: item.product.price,
+            image_url: item.product.image_url,
+            quantity: item.quantity
+          }))
+          setCart(formattedCart)
+        } else {
+          setCart([])
+        }
+
+        // Fetch Wishlist
+        const { data: wishlistData } = await supabase
+          .from("wishlist_items")
+          .select("product:products(id, name, price, image_url)")
+
+        if (wishlistData) {
+          const formattedWishlist = wishlistData.map((item: any) => ({
+            id: item.product.id,
+            name: item.product.name,
+            price: item.product.price,
+            image_url: item.product.image_url
+          }))
+          setWishlist(formattedWishlist)
+        } else {
+          setWishlist([])
+        }
+      } else {
+        // Fallback to LocalStorage
+        const savedCart = localStorage.getItem("cart")
+        const savedWishlist = localStorage.getItem("wishlist")
+        if (savedCart) setCart(JSON.parse(savedCart))
+        if (savedWishlist) setWishlist(JSON.parse(savedWishlist))
+      }
+      setIsLoaded(true)
+    }
+
+    loadData()
+  }, [user])
+
+  // 3. Save to localStorage ONLY if NOT logged in (to avoid stale overwrites)
+  // Or keep it sync? Let's strictly separate: 
+  // If user: DB is truth. If no user: LocalStorage is truth.
+  useEffect(() => {
+    if (isLoaded && !user) {
       localStorage.setItem("cart", JSON.stringify(cart))
     }
-  }, [cart, isLoaded])
+  }, [cart, isLoaded, user])
 
-  // Save to localStorage whenever wishlist changes
   useEffect(() => {
-    if (isLoaded) {
+    if (isLoaded && !user) {
       localStorage.setItem("wishlist", JSON.stringify(wishlist))
     }
-  }, [wishlist, isLoaded])
+  }, [wishlist, isLoaded, user])
+
 
   const cartTotal = cart.reduce((total, item) => total + item.price * (item.quantity || 1), 0)
   const cartCount = cart.reduce((total, item) => total + (item.quantity || 1), 0)
@@ -59,6 +120,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addToCart = (item: CartItemData) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((i) => i.id === item.id)
+
+      // Sync with DB
+      if (user) {
+        if (existingItem) {
+          const newQty = (existingItem.quantity || 1) + 1
+          supabase.from("cart_items").update({ quantity: newQty }).eq("user_id", user.id).eq("product_id", item.id).then()
+        } else {
+          supabase.from("cart_items").insert({ user_id: user.id, product_id: item.id, quantity: 1 }).then()
+        }
+      }
+
       if (existingItem) {
         return prevCart.map((i) =>
           i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i
@@ -73,29 +145,50 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removeFromCart(id)
       return
     }
+
+    // Sync with DB
+    if (user) {
+      supabase.from("cart_items").update({ quantity }).eq("user_id", user.id).eq("product_id", id).then()
+    }
+
     setCart((prevCart) =>
       prevCart.map((item) => (item.id === id ? { ...item, quantity } : item))
     )
   }
 
   const removeFromCart = (id: number) => {
+    if (user) {
+      supabase.from("cart_items").delete().eq("user_id", user.id).eq("product_id", id).then()
+    }
     setCart((prevCart) => prevCart.filter((item) => item.id !== id))
   }
 
   const addToWishlist = (item: CartItemData) => {
     const exists = wishlist.some((w) => w.id === item.id)
     if (!exists) {
+      if (user) {
+        supabase.from("wishlist_items").insert({ user_id: user.id, product_id: item.id }).then()
+      }
       setWishlist((prevWishlist) => [...prevWishlist, item])
     } else {
+      if (user) {
+        supabase.from("wishlist_items").delete().eq("user_id", user.id).eq("product_id", item.id).then()
+      }
       setWishlist((prevWishlist) => prevWishlist.filter((w) => w.id !== item.id))
     }
   }
 
   const removeFromWishlist = (id: number) => {
+    if (user) {
+      supabase.from("wishlist_items").delete().eq("user_id", user.id).eq("product_id", id).then()
+    }
     setWishlist((prevWishlist) => prevWishlist.filter((item) => item.id !== id))
   }
 
   const clearCart = () => {
+    if (user) {
+      supabase.from("cart_items").delete().eq("user_id", user.id).then()
+    }
     setCart([])
   }
 
