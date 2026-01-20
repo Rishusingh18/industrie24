@@ -3,18 +3,36 @@
 import Link from "next/link"
 import { ShoppingCart, Search, Menu, X, User, Heart, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useCart } from "@/lib/cart-context"
+import { createClient } from "@/lib/supabase/client"
 
 import { ManufacturerFilter } from "@/components/manufacturer-filter"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [selectedRegion, setSelectedRegion] = useState("India (INR ₹)")
   const [selectedLanguage, setSelectedLanguage] = useState("English")
   const [showRegionDropdown, setShowRegionDropdown] = useState(false)
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false)
+
+  useEffect(() => {
+    const supabase = createClient()
+
+    // Check active session
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+
+    // Listen for changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   const regions = [
     "India (INR ₹)",
@@ -136,7 +154,7 @@ export function Header() {
           {/* Right Icons */}
           <div className="flex items-center gap-4">
             {/* User Account */}
-            <Link href="/login">
+            <Link href={user ? "/account" : "/login"}>
               <Button variant="ghost" size="icon">
                 <User className="h-5 w-5" />
               </Button>
