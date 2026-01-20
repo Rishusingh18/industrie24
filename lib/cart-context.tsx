@@ -52,10 +52,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const loadData = async () => {
       if (user) {
         // Fetch Cart
-        const { data: cartData } = await supabase
+        const { data: cartData, error: cartError } = await supabase
           .from("cart_items")
           .select("quantity, product:products(id, name, price, image_url)")
 
+        if (cartError) console.error("Error fetching cart:", cartError)
         if (cartData) {
           const formattedCart = cartData.map((item: any) => ({
             id: item.product.id,
@@ -70,10 +71,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
 
         // Fetch Wishlist
-        const { data: wishlistData } = await supabase
+        const { data: wishlistData, error: wishlistError } = await supabase
           .from("wishlist_items")
           .select("product:products(id, name, price, image_url)")
 
+        if (wishlistError) console.error("Error fetching wishlist:", wishlistError)
         if (wishlistData) {
           const formattedWishlist = wishlistData.map((item: any) => ({
             id: item.product.id,
@@ -125,9 +127,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (user) {
         if (existingItem) {
           const newQty = (existingItem.quantity || 1) + 1
-          supabase.from("cart_items").update({ quantity: newQty }).eq("user_id", user.id).eq("product_id", item.id).then()
+          supabase.from("cart_items")
+            .update({ quantity: newQty })
+            .eq("user_id", user.id)
+            .eq("product_id", item.id)
+            .then(({ error }) => { if (error) console.error("Update cart error:", error) })
         } else {
-          supabase.from("cart_items").insert({ user_id: user.id, product_id: item.id, quantity: 1 }).then()
+          supabase.from("cart_items")
+            .insert({ user_id: user.id, product_id: item.id, quantity: 1 })
+            .then(({ error }) => { if (error) console.error("Insert cart error:", error) })
         }
       }
 
