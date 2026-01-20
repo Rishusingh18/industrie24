@@ -23,6 +23,7 @@ interface CartContextType {
   addToWishlist: (item: CartItemData) => void
   removeFromWishlist: (id: number) => void
   clearCart: () => void
+  user: any // Expose user for debugging
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -229,6 +230,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         addToWishlist,
         removeFromWishlist,
         clearCart,
+        user,
       }}
     >
       {children}
