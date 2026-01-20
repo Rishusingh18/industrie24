@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { useCart } from "@/lib/cart-context"
 
+import { ManufacturerFilter } from "@/components/manufacturer-filter"
+
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
@@ -55,9 +57,8 @@ export function Header() {
                     setSelectedRegion(region)
                     setShowRegionDropdown(false)
                   }}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm ${
-                    selectedRegion === region ? "bg-teal-100 font-semibold" : ""
-                  }`}
+                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm ${selectedRegion === region ? "bg-teal-100 font-semibold" : ""
+                    }`}
                 >
                   {region}
                 </button>
@@ -87,9 +88,8 @@ export function Header() {
                     setSelectedLanguage(language)
                     setShowLanguageDropdown(false)
                   }}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm ${
-                    selectedLanguage === language ? "bg-teal-100 font-semibold" : ""
-                  }`}
+                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm ${selectedLanguage === language ? "bg-teal-100 font-semibold" : ""
+                    }`}
                 >
                   {language}
                 </button>
@@ -136,7 +136,7 @@ export function Header() {
           {/* Right Icons */}
           <div className="flex items-center gap-4">
             {/* User Account */}
-            <Link href="/account">
+            <Link href="/login">
               <Button variant="ghost" size="icon">
                 <User className="h-5 w-5" />
               </Button>
@@ -182,9 +182,13 @@ export function Header() {
           <div className="hidden md:flex items-center justify-between py-4">
             {/* Main Nav Items */}
             <nav className="flex items-center gap-8">
-              <Link href="/manufacturers" className="text-sm font-medium hover:text-teal-600 transition-colors">
-                Manufacturers
-              </Link>
+              <ManufacturerFilter
+                trigger={
+                  <button className="text-sm font-medium hover:text-teal-600 transition-colors">
+                    Manufacturers
+                  </button>
+                }
+              />
 
               {/* Products Dropdown */}
               <div className="relative group">
@@ -294,9 +298,13 @@ export function Header() {
           {/* Mobile Menu */}
           {isMenuOpen && (
             <nav className="md:hidden py-4 border-t space-y-4">
-              <Link href="/manufacturers" className="block text-sm font-medium py-2">
-                Manufacturers
-              </Link>
+              <ManufacturerFilter
+                trigger={
+                  <button className="block text-sm font-medium py-2 w-full text-left">
+                    Manufacturers
+                  </button>
+                }
+              />
               <button
                 onClick={() => toggleDropdown("products")}
                 className="w-full text-left text-sm font-medium py-2 flex justify-between items-center"

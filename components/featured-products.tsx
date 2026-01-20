@@ -45,11 +45,11 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                   </span>
                 </div>
                 <div className="flex gap-2">
-                  <Link href={`/products/${product.id}`} className="flex-1">
-                    <Button variant="outline" className="w-full bg-transparent">
+                  <Button variant="outline" className="w-full bg-transparent" asChild>
+                    <Link href={`/products/${product.id}`}>
                       View Details
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                   <Button size="icon" className="bg-accent hover:bg-accent/90">
                     <ShoppingCart className="h-4 w-4" />
                   </Button>
@@ -60,11 +60,11 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/products">
-            <Button size="lg" variant="outline">
+          <Button size="lg" variant="outline" asChild>
+            <Link href="/products">
               View All Products
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

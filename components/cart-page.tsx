@@ -7,45 +7,17 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
 import { ArrowLeft, Trash2, Plus, Minus } from "lucide-react"
-
-interface CartItem {
-  id: number
-  name: string
-  price: number
-  quantity: number
-  image: string
-}
+import { useCart } from "@/lib/cart-context"
 
 export function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "Hydraulic Pump",
-      price: 1299.99,
-      quantity: 1,
-      image: "/placeholder.svg?height=100&width=100",
-    },
-  ])
-
+  const { cart, removeFromCart, updateQuantity, cartTotal } = useCart()
   const [promoCode, setPromoCode] = useState("")
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const subtotal = cartTotal
   const tax = subtotal * 0.1
   const total = subtotal + tax
 
-  const updateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeItem(id)
-    } else {
-      setCartItems(cartItems.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item)))
-    }
-  }
-
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter((item) => item.id !== id))
-  }
-
-  if (cartItems.length === 0) {
+  if (cart.length === 0) {
     return (
       <main className="min-h-screen bg-background py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -80,13 +52,13 @@ export function CartPage() {
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-6">
-            {cartItems.map((item) => (
+            {cart.map((item) => (
               <Card key={item.id}>
                 <CardContent className="pt-6">
                   <div className="flex gap-6">
                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
                       <img
-                        src={item.image || "/placeholder.svg"}
+                        src={item.image_url || "/placeholder.svg"}
                         alt={item.name}
                         className="h-full w-full object-cover"
                       />
@@ -99,7 +71,7 @@ export function CartPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeFromCart(item.id)}
                         className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
                       >
                         <Trash2 className="h-5 w-5" />
@@ -108,16 +80,16 @@ export function CartPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.id, (item.quantity || 1) - 1)}
                           className="h-8 w-8"
                         >
                           <Minus className="h-4 w-4" />
                         </Button>
-                        <span className="w-6 text-center font-medium text-sm">{item.quantity}</span>
+                        <span className="w-6 text-center font-medium text-sm">{item.quantity || 1}</span>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.id, (item.quantity || 1) + 1)}
                           className="h-8 w-8"
                         >
                           <Plus className="h-4 w-4" />

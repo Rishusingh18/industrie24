@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
-interface CartItemData {
+export interface CartItemData {
   id: number
   name: string
   price: number
@@ -14,8 +14,10 @@ interface CartContextType {
   cart: CartItemData[]
   wishlist: CartItemData[]
   cartTotal: number
+  cartCount: number
   addToCart: (item: CartItemData) => void
   removeFromCart: (id: number) => void
+  updateQuantity: (id: number, quantity: number) => void
   addToWishlist: (item: CartItemData) => void
   removeFromWishlist: (id: number) => void
   clearCart: () => void
@@ -51,10 +53,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [wishlist, isLoaded])
 
-  const cartTotal = cart.reduce((total, item) => total + item.price, 0)
+  const cartTotal = cart.reduce((total, item) => total + item.price * (item.quantity || 1), 0)
+  const cartCount = cart.reduce((total, item) => total + (item.quantity || 1), 0)
 
   const addToCart = (item: CartItemData) => {
-    setCart((prevCart) => [...prevCart, { ...item, quantity: 1 }])
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((i) => i.id === item.id)
+      if (existingItem) {
+        return prevCart.map((i) =>
+          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i
+        )
+      }
+      return [...prevCart, { ...item, quantity: 1 }]
+    })
+  }
+
+  const updateQuantity = (id: number, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(id)
+      return
+    }
+    setCart((prevCart) =>
+      prevCart.map((item) => (item.id === id ? { ...item, quantity } : item))
+    )
   }
 
   const removeFromCart = (id: number) => {
@@ -80,7 +101,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ cart, wishlist, cartTotal, addToCart, removeFromCart, addToWishlist, removeFromWishlist, clearCart }}
+      value={{
+        cart,
+        wishlist,
+        cartTotal,
+        cartCount,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        addToWishlist,
+        removeFromWishlist,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>

@@ -1,14 +1,15 @@
 export interface Product {
   id: number
   name: string
-  description: string | null
+  description?: string | null
   category: string
   price: number
   sku: string
   stock_quantity: number
   image_url: string | null
-  created_at: string
-  updated_at: string
+  product_type?: string | null
+  created_at?: string
+  updated_at?: string
 }
 
 export interface CartItem {

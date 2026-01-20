@@ -3,17 +3,20 @@ import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero-section"
 import { FeaturedProducts } from "@/components/featured-products"
 import { Footer } from "@/components/footer"
-import { revalidateTag } from "next/cache"
+
 
 export const revalidate = 60 // Revalidate every 60 seconds
 
 export default async function Home() {
   const supabase = await createClient()
 
-  const { data: products = [] } = await supabase.from("products").select("*").limit(8)
+  const { data } = await supabase
+    .from("products")
+    .select("id, name, price, image_url, category, sku, stock_quantity")
+    .limit(8)
+  const products = data || []
 
-  // Revalidate products tag for fresh data
-  revalidateTag("products")
+
 
   return (
     <>

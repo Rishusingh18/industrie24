@@ -14,10 +14,14 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     notFound()
   }
 
+  const { data: images } = await supabase.from("product_images").select("*").eq("product_id", product.id)
+
+
+
   return (
     <>
       <Header />
-      <ProductDetail product={product} />
+      <ProductDetail product={product} images={images || []} />
       <Footer />
     </>
   )
