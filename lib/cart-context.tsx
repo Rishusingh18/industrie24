@@ -60,8 +60,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         if (cartError) {
           console.error("Error fetching cart:", cartError)
           toast.error("Failed to sync cart: " + cartError.message)
-        }
-        if (cartData) {
+        } else if (cartData) {
           const formattedCart = cartData.map((item: any) => ({
             id: item.product.id,
             name: item.product.name,
@@ -71,10 +70,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
           }))
           setCart(formattedCart)
           if (formattedCart.length > 0) {
-            toast.success(`Loaded ${formattedCart.length} items from cloud`)
+            toast.success(`Loaded ${formattedCart.length} cart items from cloud`)
           }
-        } else {
-          setCart([])
         }
 
         // Fetch Wishlist
@@ -85,8 +82,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         if (wishlistError) {
           console.error("Error fetching wishlist:", wishlistError)
           toast.error("Failed to sync wishlist: " + wishlistError.message)
-        }
-        if (wishlistData) {
+        } else if (wishlistData) {
           const formattedWishlist = wishlistData.map((item: any) => ({
             id: item.product.id,
             name: item.product.name,
@@ -94,8 +90,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
             image_url: item.product.image_url
           }))
           setWishlist(formattedWishlist)
-        } else {
-          setWishlist([])
         }
       } else {
         // Fallback to LocalStorage
