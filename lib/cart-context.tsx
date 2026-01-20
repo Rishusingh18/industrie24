@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { toast } from "sonner"
 
 export interface CartItemData {
   id: number
@@ -56,7 +57,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
           .from("cart_items")
           .select("quantity, product:products(id, name, price, image_url)")
 
-        if (cartError) console.error("Error fetching cart:", cartError)
+        if (cartError) {
+          console.error("Error fetching cart:", cartError)
+          toast.error("Failed to sync cart: " + cartError.message)
+        }
         if (cartData) {
           const formattedCart = cartData.map((item: any) => ({
             id: item.product.id,
@@ -66,6 +70,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
             quantity: item.quantity
           }))
           setCart(formattedCart)
+          if (formattedCart.length > 0) {
+            toast.success(`Loaded ${formattedCart.length} items from cloud`)
+          }
         } else {
           setCart([])
         }
@@ -75,7 +82,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
           .from("wishlist_items")
           .select("product:products(id, name, price, image_url)")
 
-        if (wishlistError) console.error("Error fetching wishlist:", wishlistError)
+        if (wishlistError) {
+          console.error("Error fetching wishlist:", wishlistError)
+          toast.error("Failed to sync wishlist: " + wishlistError.message)
+        }
         if (wishlistData) {
           const formattedWishlist = wishlistData.map((item: any) => ({
             id: item.product.id,
