@@ -99,6 +99,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
       } else {
         // Fallback to LocalStorage
+        console.log("No user session found, using local storage")
+        // toast("Debug: Not logged in - Using Local Storage") 
+        // Commented out to avoid spam, but useful for initial debug. 
+        // Actually, user said NO popup. So let's enable it once to be sure.
+        toast.info("Debug: Not Logged In (Mobile Check)")
+
         const savedCart = localStorage.getItem("cart")
         const savedWishlist = localStorage.getItem("wishlist")
         if (savedCart) setCart(JSON.parse(savedCart))
