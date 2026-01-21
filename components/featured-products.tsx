@@ -70,11 +70,11 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                 {/* Wishlist Button - Top Right */}
                 <button
                   onClick={(e) => toggleWishlist(e, product)}
-                  className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-gray-700 transition-colors shadow-sm"
+                  className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-white/80 hover:bg-white text-gray-700 transition-colors shadow-sm"
                   aria-label="Add to wishlist"
                 >
                   <Heart
-                    className={`h-5 w-5 transition-colors ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : "text-gray-600 hover:text-red-500"
+                    className={`h-6 w-6 transition-colors ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : "text-gray-600 hover:text-red-500"
                       }`}
                   />
                 </button>
@@ -105,8 +105,8 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                     <Button
                       size="sm"
                       className={`w-full transition-all duration-300 ${addedToCart === product.id
-                          ? "bg-green-600 hover:bg-green-700 scale-105"
-                          : "bg-teal-600 hover:bg-teal-700"
+                        ? "bg-green-600 hover:bg-green-700 scale-105"
+                        : "bg-teal-600 hover:bg-teal-700"
                         }`}
                       onClick={(e) => handleAddToCart(e, product)}
                     >
