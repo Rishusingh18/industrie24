@@ -24,22 +24,22 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
             <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-square overflow-hidden bg-muted">
+              <div className="aspect-[4/3] overflow-hidden bg-muted">
                 <img
                   src={product.image_url || "/placeholder.svg?height=300&width=300&query=industrial part"}
                   alt={product.name}
                   className="h-full w-full object-cover"
                 />
               </div>
-              <CardHeader className="pb-3">
-                <CardTitle className="line-clamp-2 text-lg">{product.name}</CardTitle>
-                <CardDescription className="line-clamp-2">{product.category}</CardDescription>
+              <CardHeader className="p-4 pb-2">
+                <CardTitle className="line-clamp-1 text-base">{product.name}</CardTitle>
+                <CardDescription className="line-clamp-1 text-xs">{product.category}</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-2 p-4 pt-0">
                 <div className="flex items-baseline justify-between">
-                  <span className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</span>
+                  <span className="text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
                   <span
-                    className={`text-sm font-medium ${product.stock_quantity > 0 ? "text-green-600" : "text-red-600"}`}
+                    className={`text-xs font-medium ${product.stock_quantity > 0 ? "text-green-600" : "text-red-600"}`}
                   >
                     {product.stock_quantity > 0 ? "In Stock" : "Out of Stock"}
                   </span>

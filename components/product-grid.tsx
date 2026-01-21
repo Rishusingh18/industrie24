@@ -14,7 +14,7 @@ interface ProductGridProps {
 
 export function ProductGrid({ products }: ProductGridProps) {
   const { addToCart, addToWishlist, wishlist } = useCart()
-  const [addedToCart, setAddedToCart] = useState<string | null>(null)
+  const [addedToCart, setAddedToCart] = useState<number | null>(null)
 
   const handleAddToCart = (product: Product) => {
     addToCart({
@@ -52,7 +52,7 @@ export function ProductGrid({ products }: ProductGridProps) {
             onClick={() => handleCardClick(product.id)}
             className="group rounded-lg border border-border bg-card overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer w-full sm:w-[280px] md:w-[320px] lg:w-[350px] flex-grow max-w-[400px]"
           >
-            <div className="relative aspect-square overflow-hidden bg-muted">
+            <div className="relative aspect-[4/3] overflow-hidden bg-muted">
               <img
                 src={product.image_url || "/placeholder.svg?height=300&width=300&query=industrial part"}
                 alt={product.name}
@@ -62,18 +62,18 @@ export function ProductGrid({ products }: ProductGridProps) {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className={`bg-white/90 hover:bg-white rounded-full ${isInWishlist ? "text-red-500" : ""}`}
+                  className={`bg-white/90 hover:bg-white rounded-full h-10 w-10 ${isInWishlist ? "text-red-500" : ""}`}
                   onClick={(e) => {
                     e.stopPropagation()
                     handleAddToWishlist(product)
                   }}
                 >
-                  <Heart className="h-5 w-5" fill={isInWishlist ? "currentColor" : "none"} />
+                  <Heart className="h-6 w-6" fill={isInWishlist ? "currentColor" : "none"} />
                 </Button>
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 p-4 flex-1">
+            <div className="flex flex-col gap-2 p-3 flex-1">
               <div>
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                   {product.category || "Industrial Parts"}
