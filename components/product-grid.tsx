@@ -21,7 +21,7 @@ export function ProductGrid({ products }: ProductGridProps) {
       id: product.id,
       name: product.name,
       price: product.price,
-      image_url: product.image_url,
+      image_url: product.image_url || undefined,
     })
     setAddedToCart(product.id)
     setTimeout(() => setAddedToCart(null), 2000)
@@ -32,7 +32,7 @@ export function ProductGrid({ products }: ProductGridProps) {
       id: product.id,
       name: product.name,
       price: product.price,
-      image_url: product.image_url,
+      image_url: product.image_url || undefined,
     })
   }
 
@@ -58,18 +58,20 @@ export function ProductGrid({ products }: ProductGridProps) {
                 alt={product.name}
                 className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
-              <div className="absolute top-2 right-2">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className={`bg-white/90 hover:bg-white rounded-full h-10 w-10 ${isInWishlist ? "text-red-500" : ""}`}
+              <div className="absolute top-3 right-3 z-10">
+                <button
                   onClick={(e) => {
                     e.stopPropagation()
                     handleAddToWishlist(product)
                   }}
+                  className="p-2.5 rounded-full bg-white/80 hover:bg-white text-gray-700 transition-colors shadow-sm"
+                  aria-label="Add to wishlist"
                 >
-                  <Heart className="h-6 w-6" fill={isInWishlist ? "currentColor" : "none"} />
-                </Button>
+                  <Heart
+                    className={`h-6 w-6 transition-colors ${isInWishlist ? "fill-red-500 text-red-500" : "text-gray-600 hover:text-red-500"
+                      }`}
+                  />
+                </button>
               </div>
             </div>
 
