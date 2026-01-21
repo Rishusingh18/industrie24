@@ -1,10 +1,11 @@
 "use client"
 
+import { useState } from "react"
 import type { Product } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-import { ShoppingCart, Heart } from "lucide-react"
+import { ShoppingCart, Heart, Check } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
 
 interface FeaturedProductsProps {
@@ -13,6 +14,7 @@ interface FeaturedProductsProps {
 
 export function FeaturedProducts({ products }: FeaturedProductsProps) {
   const { addToCart, addToWishlist, removeFromWishlist, wishlist } = useCart()
+  const [addedToCart, setAddedToCart] = useState<number | null>(null)
 
   const isInWishlist = (productId: number) => {
     return wishlist.some((item) => item.id === productId)
@@ -45,6 +47,10 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
       image_url: product.image_url || undefined,
       quantity: 1
     })
+
+    // Trigger animation
+    setAddedToCart(product.id)
+    setTimeout(() => setAddedToCart(null), 2000)
   }
 
   return (
@@ -98,11 +104,23 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                   <div className="flex gap-2 mt-2">
                     <Button
                       size="sm"
-                      className="w-full bg-teal-600 hover:bg-teal-700"
+                      className={`w-full transition-all duration-300 ${addedToCart === product.id
+                          ? "bg-green-600 hover:bg-green-700 scale-105"
+                          : "bg-teal-600 hover:bg-teal-700"
+                        }`}
                       onClick={(e) => handleAddToCart(e, product)}
                     >
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Cart
+                      {addedToCart === product.id ? (
+                        <>
+                          <Check className="h-4 w-4 mr-2 animate-bounce" />
+                          Added
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="h-4 w-4 mr-2" />
+                          Add to Cart
+                        </>
+                      )}
                     </Button>
                   </div>
                 </CardContent>
