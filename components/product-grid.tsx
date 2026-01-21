@@ -4,7 +4,7 @@ import type { Product } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ShoppingCart, Heart } from "lucide-react"
+import { ShoppingCart, Heart, Check } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
 import { useState } from "react"
 
@@ -103,24 +103,28 @@ export function ProductGrid({ products }: ProductGridProps) {
 
               <div className="flex gap-2 pt-2">
                 <Button
-                  variant="outline"
-                  className="flex-1 w-full bg-transparent"
-                // No onClick needed, it bubbles to card
-                >
-                  View Details
-                </Button>
-                <Button
-                  size="icon"
-                  className={`transition-colors ${addedToCart === product.id ? "bg-green-600 hover:bg-green-700" : "bg-primary hover:bg-primary/90"
-                    } text-primary-foreground`}
+                  size="sm"
+                  className={`w-full transition-all duration-300 ${addedToCart === product.id
+                    ? "bg-green-600 hover:bg-green-700 scale-105"
+                    : "bg-teal-600 hover:bg-teal-700"
+                    }`}
                   onClick={(e) => {
                     e.stopPropagation()
                     handleAddToCart(product)
                   }}
                   disabled={product.stock_quantity === 0}
-                  title={addedToCart === product.id ? "Added to cart!" : "Add to cart"}
                 >
-                  <ShoppingCart className="h-4 w-4" />
+                  {addedToCart === product.id ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2 animate-bounce" />
+                      Added
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Add to Cart
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
