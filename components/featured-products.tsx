@@ -45,7 +45,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                   </span>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" className="w-full bg-transparent" asChild>
+                  <Button variant="outline" className="flex-1 bg-transparent" asChild>
                     <Link href={`/products/${product.id}`}>
                       View Details
                     </Link>
