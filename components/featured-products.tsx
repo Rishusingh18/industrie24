@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Link from "next/link"
 import { ShoppingCart, Heart, Check } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
+import { useLanguage } from "@/lib/language-context"
+import { Price } from "@/components/price"
 
 interface FeaturedProductsProps {
   products: Product[]
@@ -53,13 +55,15 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
     setTimeout(() => setAddedToCart(null), 2000)
   }
 
+  const { t } = useLanguage()
+
   return (
     <section className="py-20 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Featured Products</h2>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t("featured.title")}</h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Explore our most popular industrial components and spare parts
+            {t("featured.subtitle")}
           </p>
         </div>
 
@@ -94,11 +98,13 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                 </CardHeader>
                 <CardContent className="space-y-2 p-4 pt-0">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
+                    <span className="text-lg font-bold text-primary">
+                      <Price amount={product.price} />
+                    </span>
                     <span
                       className={`text-xs font-medium ${product.stock_quantity > 0 ? "text-green-600" : "text-red-600"}`}
                     >
-                      {product.stock_quantity > 0 ? "In Stock" : "Out of Stock"}
+                      {product.stock_quantity > 0 ? t("products.in_stock") : t("products.out_of_stock")}
                     </span>
                   </div>
                   <div className="flex gap-2 mt-2">
@@ -113,12 +119,12 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                       {addedToCart === product.id ? (
                         <>
                           <Check className="h-4 w-4 mr-2 animate-bounce" />
-                          Added
+                          {t("products.added")}
                         </>
                       ) : (
                         <>
                           <ShoppingCart className="h-4 w-4 mr-2" />
-                          Add to Cart
+                          {t("products.add_to_cart")}
                         </>
                       )}
                     </Button>
@@ -132,7 +138,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
         <div className="mt-12 text-center">
           <Button size="lg" variant="outline" asChild>
             <Link href="/products">
-              View All Products
+              {t("products.view_all")}
             </Link>
           </Button>
         </div>

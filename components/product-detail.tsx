@@ -8,6 +8,8 @@ import Link from "next/link"
 import { ArrowLeft, ShoppingCart, Plus, Minus, Heart, Check } from "lucide-react"
 import { useState } from "react"
 import { useCart } from "@/lib/cart-context"
+import { useLanguage } from "@/lib/language-context"
+import { Price } from "@/components/price"
 
 interface ProductDetailProps {
   product: Product
@@ -54,7 +56,10 @@ export function ProductDetail({ product, images }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1)
   const [addedToCart, setAddedToCart] = useState(false)
   const { addToCart, addToWishlist, wishlist } = useCart()
+  const { t } = useLanguage()
   const isInWishlist = wishlist.some((item) => item.id === product.id)
+
+
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
@@ -62,7 +67,7 @@ export function ProductDetail({ product, images }: ProductDetailProps) {
         id: product.id,
         name: product.name,
         price: product.price,
-        image_url: product.image_url,
+        image_url: product.image_url || undefined,
       })
     }
     setAddedToCart(true)
@@ -74,7 +79,7 @@ export function ProductDetail({ product, images }: ProductDetailProps) {
       id: product.id,
       name: product.name,
       price: product.price,
-      image_url: product.image_url,
+      image_url: product.image_url || undefined,
     })
   }
 
@@ -139,10 +144,15 @@ export function ProductDetail({ product, images }: ProductDetailProps) {
             <div>
               <h1 className="text-2xl font-bold tracking-tight sm:text-3xl mb-4">{product.name}</h1>
 
+  /* import {useLanguage} from "@/lib/language-context" */
+  /* import {Price} from "@/components/price" */
+              const {t} = useLanguage()
+
+              /* ... */
+
               <div className="flex items-baseline gap-4 mb-4">
                 <span className="text-3xl font-bold text-foreground">
-                  {/* Assuming price is in USD or generic currency based on context, user ref showed 'Rs.' and '$'. Keeping $ for now or dynamic if needed. Reference 1 has 'Rs.' but I'll stick to '$' as per current unless instructed otherwise. Actually, let's use global config if available. Keeping $ for consistency with existing code. */}
-                  ${product.price.toFixed(2)}
+                  <Price amount={product.price} />
                 </span>
                 <span className="text-sm text-muted-foreground">incl. VAT, plus shipping</span>
               </div>
@@ -238,7 +248,7 @@ export function ProductDetail({ product, images }: ProductDetailProps) {
                   disabled={product.stock_quantity === 0}
                 >
                   <ShoppingCart className="h-5 w-5" />
-                  {addedToCart ? "Added to Cart!" : "Add to Cart"}
+                  {addedToCart ? t("products.added") : t("products.add_to_cart")}
                 </Button>
 
                 <Button size="lg" variant="outline" className="w-full bg-transparent" onClick={handleAddToWishlist}>

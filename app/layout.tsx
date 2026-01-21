@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { CartProvider } from "@/lib/cart-context"
+import { CurrencyProvider } from "@/lib/currency-context"
+import { LanguageProvider } from "@/lib/language-context"
 import { Toaster } from "sonner"
 import "./globals.css"
 
@@ -40,11 +42,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans antialiased`}>
-        <CartProvider>
-          {children}
-          <Analytics />
-          <Toaster />
-        </CartProvider>
+        <LanguageProvider>
+          <CurrencyProvider>
+            <CartProvider>
+              {children}
+              <Analytics />
+              <Toaster />
+            </CartProvider>
+          </CurrencyProvider>
+        </LanguageProvider>
       </body>
     </html>
   )

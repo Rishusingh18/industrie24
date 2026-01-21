@@ -3,6 +3,8 @@
 import Link from "next/link"
 import { ShoppingCart, Search, Menu, X, User, Heart, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useCurrency, type Currency } from "@/lib/currency-context"
+import { useLanguage, type Language } from "@/lib/language-context"
 import { useState } from "react"
 import { useCart } from "@/lib/cart-context"
 
@@ -11,20 +13,28 @@ import { ManufacturerFilter } from "@/components/manufacturer-filter"
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
-  const [selectedRegion, setSelectedRegion] = useState("India (INR ₹)")
-  const [selectedLanguage, setSelectedLanguage] = useState("English")
+
+  const { currency, setCurrency } = useCurrency()
+  const { language, setLanguage, t } = useLanguage()
+
   const [showRegionDropdown, setShowRegionDropdown] = useState(false)
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false)
 
-  const regions = [
-    "India (INR ₹)",
-    "Germany (EUR €)",
-    "United States (USD $)",
-    "United Kingdom (GBP £)",
-    "Canada (CAD $)",
+  const regions: { name: string; value: Currency }[] = [
+    { name: "India (INR ₹)", value: "INR" },
+    { name: "Germany (EUR €)", value: "EUR" },
+    { name: "United States (USD $)", value: "USD" },
+    { name: "United Kingdom (GBP £)", value: "GBP" },
+    { name: "Canada (CAD $)", value: "CAD" },
   ]
 
-  const languages = ["English", "German", "French", "Spanish", "Hindi"]
+  const languages: { name: string; value: Language }[] = [
+    { name: "English", value: "en" },
+    { name: "German", value: "de" },
+    { name: "French", value: "fr" },
+    { name: "Spanish", value: "es" },
+    { name: "Hindi", value: "hi" },
+  ]
 
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name)
@@ -45,22 +55,22 @@ export function Header() {
               setShowLanguageDropdown(false)
             }}
           >
-            {selectedRegion}
+            {regions.find((r) => r.value === currency)?.name}
             <ChevronDown className={`h-4 w-4 transition-transform ${showRegionDropdown ? "rotate-180" : ""}`} />
           </button>
           {showRegionDropdown && (
             <div className="absolute right-0 top-full mt-2 bg-white text-gray-800 rounded shadow-lg py-2 min-w-48 z-10">
               {regions.map((region) => (
                 <button
-                  key={region}
+                  key={region.value}
                   onClick={() => {
-                    setSelectedRegion(region)
+                    setCurrency(region.value)
                     setShowRegionDropdown(false)
                   }}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm ${selectedRegion === region ? "bg-teal-100 font-semibold" : ""
+                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm ${currency === region.value ? "bg-teal-100 font-semibold" : ""
                     }`}
                 >
-                  {region}
+                  {region.name}
                 </button>
               ))}
             </div>
@@ -76,22 +86,22 @@ export function Header() {
               setShowRegionDropdown(false)
             }}
           >
-            {selectedLanguage}
+            {languages.find((l) => l.value === language)?.name}
             <ChevronDown className={`h-4 w-4 transition-transform ${showLanguageDropdown ? "rotate-180" : ""}`} />
           </button>
           {showLanguageDropdown && (
             <div className="absolute right-0 top-full mt-2 bg-white text-gray-800 rounded shadow-lg py-2 min-w-40 z-10">
-              {languages.map((language) => (
+              {languages.map((l) => (
                 <button
-                  key={language}
+                  key={l.value}
                   onClick={() => {
-                    setSelectedLanguage(language)
+                    setLanguage(l.value)
                     setShowLanguageDropdown(false)
                   }}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm ${selectedLanguage === language ? "bg-teal-100 font-semibold" : ""
+                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm ${language === l.value ? "bg-teal-100 font-semibold" : ""
                     }`}
                 >
-                  {language}
+                  {l.name}
                 </button>
               ))}
             </div>
@@ -114,7 +124,7 @@ export function Header() {
           {/* Search Bar */}
           <div className="hidden md:flex flex-1 max-w-md">
             <div className="flex w-full items-center bg-gray-100 rounded px-4">
-              <input type="text" placeholder="Search" className="flex-1 py-2 bg-gray-100 outline-none text-sm" />
+              <input type="text" placeholder={t("header.search")} className="flex-1 py-2 bg-gray-100 outline-none text-sm" />
               <Search className="h-5 w-5 text-gray-600" />
             </div>
           </div>
@@ -126,7 +136,7 @@ export function Header() {
                 <span className="text-lg">📞</span>
               </div>
               <div className="text-right">
-                <div className="text-xs text-gray-600">Contact & Support</div>
+                <div className="text-xs text-gray-600">{t("header.contact_support")}</div>
                 <div className="text-sm font-semibold">+49 40 2285 1551</div>
               </div>
               <ChevronDown className="h-4 w-4 text-gray-600" />
@@ -164,7 +174,7 @@ export function Header() {
 
             {/* Subtotal */}
             <div className="hidden md:block text-right">
-              <div className="text-xs text-gray-600">Subtotal</div>
+              <div className="text-xs text-gray-600">{t("header.subtotal")}</div>
               <div className="text-sm font-semibold">${cartTotal.toFixed(2)}</div>
             </div>
 
@@ -185,7 +195,7 @@ export function Header() {
               <ManufacturerFilter
                 trigger={
                   <button className="text-sm font-medium hover:text-teal-600 transition-colors">
-                    Manufacturers
+                    {t("nav.manufacturers")}
                   </button>
                 }
               />
@@ -196,13 +206,13 @@ export function Header() {
                   className="text-sm font-medium hover:text-teal-600 transition-colors flex items-center gap-1"
                   onClick={() => toggleDropdown("products")}
                 >
-                  Products
+                  {t("nav.products")}
                   <ChevronDown className="h-4 w-4" />
                 </button>
                 <div className="absolute left-0 top-full hidden group-hover:block pt-2">
                   <div className="bg-white border rounded shadow-lg py-2 min-w-56">
                     <Link href="/products" className="block px-4 py-2 hover:bg-gray-100 text-sm font-semibold">
-                      All Products
+                      {t("products.view_all")}
                     </Link>
                     <div className="border-t my-2"></div>
                     <Link href="/products?category=automation" className="block px-4 py-2 hover:bg-gray-100 text-sm">
@@ -237,11 +247,11 @@ export function Header() {
               </div>
 
               <Link href="/request-spare-part" className="text-sm font-medium hover:text-teal-600 transition-colors">
-                Request a spare part
+                {t("nav.request_part")}
               </Link>
 
               <Link href="/industrial-purchase" className="text-sm font-medium hover:text-teal-600 transition-colors">
-                Industrial purchase
+                {t("nav.industrial_purchase")}
               </Link>
 
               {/* Company Details Dropdown */}
@@ -250,13 +260,13 @@ export function Header() {
                   className="text-sm font-medium hover:text-teal-600 transition-colors flex items-center gap-1"
                   onClick={() => toggleDropdown("company")}
                 >
-                  Company Details
+                  {t("nav.company_details")}
                   <ChevronDown className="h-4 w-4" />
                 </button>
                 <div className="absolute left-0 top-full hidden group-hover:block pt-2">
                   <div className="bg-white border rounded shadow-lg py-2 min-w-48">
                     <Link href="/faq" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                      FAQ
+                      {t("nav.faq")}
                     </Link>
                     <Link href="/reviews" className="block px-4 py-2 hover:bg-gray-100 text-sm">
                       Reviews
@@ -284,13 +294,13 @@ export function Header() {
                 href="/contact"
                 className="text-sm font-medium hover:text-teal-600 transition-colors flex items-center gap-1"
               >
-                📞 Contact
+                📞 {t("nav.contact")}
               </Link>
               <Link
                 href="/faq"
                 className="text-sm font-medium hover:text-teal-600 transition-colors flex items-center gap-1"
               >
-                ❓ FAQ
+                ❓ {t("nav.faq")}
               </Link>
             </div>
           </div>
@@ -398,7 +408,7 @@ export function Header() {
       {/* Shipping Banner */}
       <Link href="/shipment">
         <div className="bg-teal-600 text-white text-center py-2 hover:bg-teal-700 transition-colors cursor-pointer">
-          <p className="text-sm font-medium">Free standard shipping in Germany from 100€ purchase value →</p>
+          <p className="text-sm font-medium">{t("banner.shipping")}</p>
         </div>
       </Link>
     </header>

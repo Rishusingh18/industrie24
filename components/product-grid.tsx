@@ -6,6 +6,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ShoppingCart, Heart, Check } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
+import { useLanguage } from "@/lib/language-context"
+import { Price } from "@/components/price"
 import { useState } from "react"
 
 interface ProductGridProps {
@@ -14,6 +16,7 @@ interface ProductGridProps {
 
 export function ProductGrid({ products }: ProductGridProps) {
   const { addToCart, addToWishlist, wishlist } = useCart()
+  const { t } = useLanguage()
   const [addedToCart, setAddedToCart] = useState<number | null>(null)
 
   const handleAddToCart = (product: Product) => {
@@ -89,7 +92,9 @@ export function ProductGrid({ products }: ProductGridProps) {
 
               <div className="flex items-baseline justify-between mt-auto">
                 <div>
-                  <span className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-primary">
+                    <Price amount={product.price} />
+                  </span>
                 </div>
                 <span
                   className={`text-xs font-semibold px-2 py-1 rounded-full ${product.stock_quantity > 0
@@ -97,7 +102,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                     : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                     }`}
                 >
-                  {product.stock_quantity > 0 ? "In Stock" : "Out of Stock"}
+                  {product.stock_quantity > 0 ? t("products.in_stock") : t("products.out_of_stock")}
                 </span>
               </div>
 
@@ -117,12 +122,12 @@ export function ProductGrid({ products }: ProductGridProps) {
                   {addedToCart === product.id ? (
                     <>
                       <Check className="h-4 w-4 mr-2 animate-bounce" />
-                      Added
+                      {t("products.added")}
                     </>
                   ) : (
                     <>
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Cart
+                      {t("products.add_to_cart")}
                     </>
                   )}
                 </Button>

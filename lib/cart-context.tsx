@@ -48,9 +48,35 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  // 2. Fetch data (DB if logged in, LocalStorage if not)
+  // 2. Fetch data
   useEffect(() => {
     const loadData = async () => {
+      // Always load from LocalStorage first for immediate UI feedback (cache)
+      const savedCart = localStorage.getItem("cart")
+      const savedWishlist = localStorage.getItem("wishlist")
+
+      let initialCart = []
+      let initialWishlist = []
+
+      if (savedCart) {
+        try {
+          initialCart = JSON.parse(savedCart)
+          setCart(initialCart)
+        } catch (e) {
+          console.error("Failed to parse cart from LS", e)
+        }
+      }
+
+      if (savedWishlist) {
+        try {
+          initialWishlist = JSON.parse(savedWishlist)
+          setWishlist(initialWishlist)
+        } catch (e) {
+          console.error("Failed to parse wishlist from LS", e)
+        }
+      }
+
+      // If user is logged in, sync/fetch from DB
       if (user) {
         // Fetch Cart
         const { data: cartData, error: cartError } = await supabase
@@ -60,7 +86,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         if (cartError) {
           console.error("Error fetching cart:", cartError)
           toast.error("Failed to sync cart: " + cartError.message)
-        } else if (cartData) {
+        } else if (cartData && cartData.length > 0) {
+          // DB has data, use it (server authority)
           const formattedCart = cartData.map((item: any) => ({
             id: item.product.id,
             name: item.product.name,
@@ -69,9 +96,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
             quantity: item.quantity
           }))
           setCart(formattedCart)
-          if (formattedCart.length > 0) {
-            toast.success(`Loaded ${formattedCart.length} cart items from cloud`)
-          }
+          // Note: formattedCart will be saved to LS by the other useEffect
+        } else if (initialCart.length > 0) {
+          // DB is empty but LS has items? Optional: Could push LS items to DB here to "merge" 
+          // For now, let's assume DB authority implies if it's empty, it's empty. 
+          // BUT if we just logged in for the first time or session, maybe we want to keep LS?
+          // Let's stick to: DB wins. If DB is empty, user has empty cart.
+          // However, for better UX on "refresh", the LS load above handles the gap.
+          // If we explicitly get an empty array from DB, we set empty.
+          if (cartData) setCart([])
         }
 
         // Fetch Wishlist
@@ -81,8 +114,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
         if (wishlistError) {
           console.error("Error fetching wishlist:", wishlistError)
-          toast.error("Failed to sync wishlist: " + wishlistError.message)
-        } else if (wishlistData) {
+        } else if (wishlistData && wishlistData.length > 0) {
           const formattedWishlist = wishlistData.map((item: any) => ({
             id: item.product.id,
             name: item.product.name,
@@ -90,34 +122,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
             image_url: item.product.image_url
           }))
           setWishlist(formattedWishlist)
+        } else if (wishlistData) {
+          setWishlist([])
         }
-      } else {
-        // Fallback to LocalStorage
-        const savedCart = localStorage.getItem("cart")
-        const savedWishlist = localStorage.getItem("wishlist")
-        if (savedCart) setCart(JSON.parse(savedCart))
-        if (savedWishlist) setWishlist(JSON.parse(savedWishlist))
       }
+
       setIsLoaded(true)
     }
 
     loadData()
   }, [user])
 
-  // 3. Save to localStorage ONLY if NOT logged in (to avoid stale overwrites)
-  // Or keep it sync? Let's strictly separate: 
-  // If user: DB is truth. If no user: LocalStorage is truth.
+  // 3. Save to localStorage ALWAYS (as a cache/backup)
+  // This ensures that on refresh (when user is initially null), we have data to show.
   useEffect(() => {
-    if (isLoaded && !user) {
+    if (isLoaded) {
       localStorage.setItem("cart", JSON.stringify(cart))
     }
-  }, [cart, isLoaded, user])
+  }, [cart, isLoaded])
 
   useEffect(() => {
-    if (isLoaded && !user) {
+    if (isLoaded) {
       localStorage.setItem("wishlist", JSON.stringify(wishlist))
     }
-  }, [wishlist, isLoaded, user])
+  }, [wishlist, isLoaded])
 
 
   const cartTotal = cart.reduce((total, item) => total + item.price * (item.quantity || 1), 0)
