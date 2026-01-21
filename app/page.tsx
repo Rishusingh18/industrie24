@@ -13,6 +13,7 @@ export default async function Home() {
   const { data } = await supabase
     .from("products")
     .select("id, name, price, image_url, category, sku, stock_quantity")
+    .eq("is_featured", true)
     .limit(8)
   const products = data || []
 

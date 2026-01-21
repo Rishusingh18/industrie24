@@ -43,14 +43,14 @@ export function ProductGrid({ products }: ProductGridProps) {
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-6">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-items-center">
       {products.map((product) => {
         const isInWishlist = wishlist.some((item) => item.id === product.id)
         return (
           <div
             key={product.id}
             onClick={() => handleCardClick(product.id)}
-            className="group rounded-lg border border-border bg-card overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer w-full sm:w-[280px] md:w-[320px] lg:w-[350px] flex-grow max-w-[400px]"
+            className="group rounded-lg border border-border bg-card overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer h-full w-full"
           >
             <div className="relative aspect-[4/3] overflow-hidden bg-muted">
               <img
