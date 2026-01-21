@@ -144,11 +144,7 @@ export function ProductDetail({ product, images }: ProductDetailProps) {
             <div>
               <h1 className="text-2xl font-bold tracking-tight sm:text-3xl mb-4">{product.name}</h1>
 
-  /* import {useLanguage} from "@/lib/language-context" */
-  /* import {Price} from "@/components/price" */
-              const {t} = useLanguage()
 
-              /* ... */
 
               <div className="flex items-baseline gap-4 mb-4">
                 <span className="text-3xl font-bold text-foreground">
