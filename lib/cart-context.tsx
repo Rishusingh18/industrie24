@@ -98,13 +98,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
           setCart(formattedCart)
           // Note: formattedCart will be saved to LS by the other useEffect
         } else if (initialCart.length > 0) {
-          // DB is empty but LS has items? Optional: Could push LS items to DB here to "merge" 
-          // For now, let's assume DB authority implies if it's empty, it's empty. 
-          // BUT if we just logged in for the first time or session, maybe we want to keep LS?
-          // Let's stick to: DB wins. If DB is empty, user has empty cart.
-          // However, for better UX on "refresh", the LS load above handles the gap.
-          // If we explicitly get an empty array from DB, we set empty.
-          if (cartData) setCart([])
+          // DB is empty but LS has items.
+          // PRESERVE local items instead of clearing them.
+          // Ideally, we would sync these to the DB here.
+          // For now, we just keep them so the user doesn't lose data on refresh.
+          console.log("Preserving local cart items despite empty DB")
         }
 
         // Fetch Wishlist
