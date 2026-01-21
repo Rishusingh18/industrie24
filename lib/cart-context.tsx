@@ -121,7 +121,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
           }))
           setWishlist(formattedWishlist)
         } else if (wishlistData) {
-          setWishlist([])
+          // Preserve local wishlist logic same as cart
+          if (initialWishlist.length > 0) {
+            console.log("Preserving local wishlist items despite empty DB")
+          } else {
+            setWishlist([])
+          }
         }
       }
 
