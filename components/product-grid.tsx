@@ -3,6 +3,7 @@
 import type { Product } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import { useRouter } from "next/navigation"
 import { ShoppingCart, Heart, Check } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
@@ -56,10 +57,12 @@ export function ProductGrid({ products }: ProductGridProps) {
             className="group rounded-lg border border-border bg-card overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer h-full w-full"
           >
             <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-              <img
+              <ImageWithFallback
                 src={product.image_url || "/placeholder.svg?height=300&width=300&query=industrial part"}
                 alt={product.name}
-                className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                className="object-cover group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute top-3 right-3 z-10">
                 <button

@@ -37,7 +37,7 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
         "filters.clear_all": "Clear all",
         "filters.showing_results": "Showing results",
         "filters.no_results": "No products found",
-        "banner.shipping": "Free standard shipping in Germany from 100€ purchase value →"
+        "banner.shipping": "Free standard shipping in India from ₹10,000 purchase value →"
     },
     de: {
         "nav.manufacturers": "Hersteller",
@@ -141,7 +141,7 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
         "filters.clear_all": "सभी साफ़ करें",
         "filters.showing_results": "परिणाम दिखा रहा है",
         "filters.no_results": "कोई उत्पाद नहीं मिला",
-        "banner.shipping": "जर्मनी में 100€ से अधिक की खरीद पर मुफ्त मानक शिपिंग →"
+        "banner.shipping": "भारत में ₹10,000 से अधिक की खरीद पर मुफ्त मानक शिपिंग →"
     }
 }
 

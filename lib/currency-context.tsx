@@ -14,11 +14,11 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined)
 
 const EXCHANGE_RATES: Record<Currency, number> = {
-    EUR: 1,
-    USD: 1.09, // 1 EUR = 1.09 USD
-    INR: 92.5, // 1 EUR = 92.5 INR
-    GBP: 0.85, // 1 EUR = 0.85 GBP
-    CAD: 1.48, // 1 EUR = 1.48 CAD
+    USD: 1,
+    EUR: 0.92, // 1 USD = 0.92 EUR
+    INR: 83.5, // 1 USD = 83.5 INR
+    GBP: 0.79, // 1 USD = 0.79 GBP
+    CAD: 1.36, // 1 USD = 1.36 CAD
 }
 
 const CURRENCY_SYMBOLS: Record<Currency, string> = {
@@ -30,7 +30,7 @@ const CURRENCY_SYMBOLS: Record<Currency, string> = {
 }
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-    const [currency, setCurrency] = useState<Currency>("EUR")
+    const [currency, setCurrency] = useState<Currency>("USD")
 
     // Optional: Persist to local storage
     useEffect(() => {
@@ -45,9 +45,9 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem("preferred_currency", c)
     }
 
-    const convertPrice = (priceInEur: number) => {
+    const convertPrice = (priceInUsd: number) => {
         const rate = EXCHANGE_RATES[currency]
-        const value = priceInEur * rate
+        const value = priceInUsd * rate
         const symbol = CURRENCY_SYMBOLS[currency]
 
         return {
@@ -62,8 +62,8 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-    const formatPrice = (priceInEur: number) => {
-        return convertPrice(priceInEur).formatted
+    const formatPrice = (priceInUsd: number) => {
+        return convertPrice(priceInUsd).formatted
     }
 
     return (

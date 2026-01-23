@@ -5,6 +5,7 @@ import type { Product } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import { ShoppingCart, Heart, Check } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
 import { useLanguage } from "@/lib/language-context"
@@ -59,7 +60,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
 
   return (
     <section className="py-20 sm:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[98%] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t("featured.title")}</h2>
           <p className="mt-4 text-lg text-muted-foreground">
@@ -68,7 +69,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {products.map((product) => (
+          {products.map((product, index) => (
             <Link key={product.id} href={`/products/${product.id}`} className="group">
               <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative">
                 {/* Wishlist Button - Top Right */}
@@ -84,10 +85,13 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                 </button>
 
                 <div className="aspect-[4/3] overflow-hidden bg-muted relative">
-                  <img
+                  <ImageWithFallback
                     src={product.image_url || "/placeholder.svg?height=300&width=300&query=industrial part"}
                     alt={product.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    priority={index < 4}
                   />
                 </div>
                 <CardHeader className="p-4 pb-2">

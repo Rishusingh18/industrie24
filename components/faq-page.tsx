@@ -116,7 +116,7 @@ const categories = Array.from(new Set(faqs.map((faq) => faq.category)))
 export function FAQPage() {
   return (
     <main className="min-h-screen bg-background py-12">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[98%] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">Frequently Asked Questions</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

@@ -47,7 +47,7 @@ export function ContactPage() {
 
   return (
     <main className="min-h-screen bg-background py-12">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[98%] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">Get in Touch</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -66,7 +66,7 @@ export function ContactPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p className="font-semibold">+1 (555) 123-4567</p>
+              <p className="font-semibold">+91 97188 89253</p>
               <p className="text-sm text-muted-foreground">Monday - Friday, 9am - 5pm EST</p>
             </CardContent>
           </Card>
@@ -79,7 +79,7 @@ export function ContactPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p className="font-semibold">info@industrie24.com</p>
+              <p className="font-semibold">unispare1@gmail.com</p>
               <p className="text-sm text-muted-foreground">We'll respond within 24 hours</p>
             </CardContent>
           </Card>
@@ -92,8 +92,8 @@ export function ContactPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p className="font-semibold">123 Industrial Way</p>
-              <p className="text-sm text-muted-foreground">New York, NY 10001</p>
+              <p className="font-semibold">B-604/9 Rajveer Colony</p>
+              <p className="text-sm text-muted-foreground">Gharoli Extension Delhi -96</p>
             </CardContent>
           </Card>
         </div>

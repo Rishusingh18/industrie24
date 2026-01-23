@@ -1,12 +1,14 @@
+"use client"
+
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { useCurrency } from "@/lib/currency-context"
 
-export const metadata = {
-  title: "Shipment - Industrie24",
-  description: "Shipping methods, rates, and delivery information for Industrie24",
-}
+const toUsd = (eur: number) => eur / 0.92
 
 export default function ShipmentPage() {
+  const { formatPrice } = useCurrency()
+
   return (
     <>
       <Header />
@@ -40,23 +42,23 @@ export default function ShipmentPage() {
                 <tbody>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-semibold text-gray-900">Standard (1-3 working days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">4.99 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(4.99))}</td>
                   </tr>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-semibold text-gray-900">
                       Express (delivery by the end of the next business day*)
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">24 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(24))}</td>
                   </tr>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-semibold text-gray-900">
                       Express+ (delivery the next working day by 9 a.m.*)
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">99 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(99))}</td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 font-semibold text-gray-900">Pallet shipping (2-4 working days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">190 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(190))}</td>
                   </tr>
                 </tbody>
               </table>
@@ -72,11 +74,11 @@ export default function ShipmentPage() {
                 <tbody>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-semibold text-gray-900">Standard FedEx (4-6 Working days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">59 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(59))}</td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 font-semibold text-gray-900">Express FedEx (2-4 Working days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">119 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(119))}</td>
                   </tr>
                 </tbody>
               </table>
@@ -92,11 +94,11 @@ export default function ShipmentPage() {
                 <tbody>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-semibold text-gray-900">Standard FedEx (4-5 Working days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">49 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(49))}</td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 font-semibold text-gray-900">Express FedEx (2 Working days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">119 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(119))}</td>
                   </tr>
                 </tbody>
               </table>
@@ -112,19 +114,19 @@ export default function ShipmentPage() {
                 <tbody>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-semibold text-gray-900">Standard UPS (2-3 business days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">15 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(15))}</td>
                   </tr>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-semibold text-gray-900">
                       Express FedEx (next business day until 6 p.m.*)
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">59 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(59))}</td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 font-semibold text-gray-900">
                       Express+ FedEx (next working day until 12 noon*)
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">99 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(99))}</td>
                   </tr>
                 </tbody>
               </table>
@@ -140,17 +142,17 @@ export default function ShipmentPage() {
                 <tbody>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-semibold text-gray-900">Standard UPS (1-2 business days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">19 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(19))}</td>
                   </tr>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-semibold text-gray-900">Express UPS (1-2 business days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">119 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(119))}</td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 font-semibold text-gray-900">
                       Express+ FedEx (next working day until 12 noon*)
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">149 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(149))}</td>
                   </tr>
                 </tbody>
               </table>
@@ -166,11 +168,11 @@ export default function ShipmentPage() {
                 <tbody>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-semibold text-gray-900">Standard UPS (3-4 Working days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">49 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(49))}</td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 font-semibold text-gray-900">Express UPS (2 Working days*)</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">99 €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{formatPrice(toUsd(99))}</td>
                   </tr>
                 </tbody>
               </table>
@@ -183,7 +185,7 @@ export default function ShipmentPage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Important Information</h3>
             <ul className="text-gray-700 space-y-2 text-sm">
               <li>✓ All shipping costs include VAT</li>
-              <li>✓ Free standard shipping in Germany from 100€ purchase value</li>
+              <li>✓ Free standard shipping in Germany from {formatPrice(toUsd(100))} purchase value</li>
               <li>
                 ✓ Customs clearance costs, taxes and customs duties will be charged separately by the transport company
               </li>

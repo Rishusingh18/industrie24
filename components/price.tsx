@@ -10,6 +10,6 @@ interface PriceProps {
 export function Price({ amount, className = "" }: PriceProps) {
     const { formatPrice } = useCurrency()
 
-    // amount is expected to be in EUR (base currency)
+    // amount is expected to be in USD (base currency)
     return <span className={className}>{formatPrice(amount)}</span>
 }

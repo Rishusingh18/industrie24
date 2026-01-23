@@ -74,7 +74,7 @@ export function ProductsContent({ initialProducts, totalProducts = 0, currentPag
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[98%] px-4 py-8 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-2">
           {selectedCategory && selectedCategory !== "all"
             ? selectedCategory

@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card"
 import { useCart } from "@/lib/cart-context"
 import { ShoppingCart, Trash2, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 
 export default function WishlistPage() {
   const { wishlist, removeFromWishlist, addToCart } = useCart()
@@ -16,7 +17,7 @@ export default function WishlistPage() {
       <>
         <Header />
         <main className="min-h-screen bg-background">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[98%] px-4 py-12 sm:px-6 lg:px-8">
             <div className="flex items-center gap-2 mb-8">
               <Link href="/products" className="text-teal-600 hover:text-teal-700 flex items-center gap-1">
                 <ArrowLeft className="h-4 w-4" />
@@ -42,7 +43,7 @@ export default function WishlistPage() {
     <>
       <Header />
       <main className="min-h-screen bg-background">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[98%] px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 mb-8">
             <Link href="/products" className="text-teal-600 hover:text-teal-700 flex items-center gap-1">
               <ArrowLeft className="h-4 w-4" />
@@ -56,10 +57,12 @@ export default function WishlistPage() {
             {wishlist.map((item) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="relative aspect-square overflow-hidden bg-muted">
-                  <img
+                  <ImageWithFallback
                     src={item.image_url || "/placeholder.svg?height=300&width=300&query=industrial part"}
                     alt={item.name}
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
+                    className="object-cover"
                   />
                 </div>
                 <div className="p-4 space-y-3">

@@ -160,18 +160,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       // Sync with DB
       if (user) {
-        if (existingItem) {
-          const newQty = (existingItem.quantity || 1) + 1
-          supabase.from("cart_items")
-            .update({ quantity: newQty })
-            .eq("user_id", user.id)
-            .eq("product_id", item.id)
-            .then(({ error }) => { if (error) console.error("Update cart error:", error) })
-        } else {
-          supabase.from("cart_items")
-            .insert({ user_id: user.id, product_id: item.id, quantity: 1 })
-            .then(({ error }) => { if (error) console.error("Insert cart error:", error) })
-        }
+        // Optimistically calculate new quantity
+        const newQty = existingItem ? (existingItem.quantity || 1) + 1 : 1
+
+        // Use upsert to handle both insert and update cases reliably
+        supabase.from("cart_items")
+          .upsert(
+            {
+              user_id: user.id,
+              product_id: item.id,
+              quantity: newQty
+            },
+            { onConflict: 'user_id, product_id' }
+          )
+          .then(({ error }) => {
+            if (error) {
+              console.error("Cart sync error:", JSON.stringify(error, null, 2))
+              toast.error("Failed to sync cart: " + (error.message || "Unknown error"))
+            }
+          })
       }
 
       if (existingItem) {

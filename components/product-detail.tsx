@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import { ArrowLeft, ShoppingCart, Plus, Minus, Heart, Check } from "lucide-react"
 import { useState } from "react"
 import { useCart } from "@/lib/cart-context"
@@ -97,7 +98,7 @@ export function ProductDetail({ product, images }: ProductDetailProps) {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[98%] px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <Link
           href="/products"
@@ -110,11 +111,14 @@ export function ProductDetail({ product, images }: ProductDetailProps) {
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Product Image Gallery */}
           <div className="flex flex-col gap-4">
-            <div className="aspect-square w-full max-w-md overflow-hidden rounded-lg bg-muted mx-auto">
-              <img
+            <div className="aspect-square w-full max-w-md overflow-hidden rounded-lg bg-muted mx-auto relative">
+              <ImageWithFallback
                 src={selectedImage}
                 alt={product.name}
-                className="h-full w-full object-cover"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 500px"
+                className="object-cover"
               />
             </div>
 
@@ -128,10 +132,12 @@ export function ProductDetail({ product, images }: ProductDetailProps) {
                     className={`relative aspect-square w-full overflow-hidden rounded-md border-2 ${selectedImage === img ? "border-primary" : "border-transparent"
                       }`}
                   >
-                    <img
+                    <ImageWithFallback
                       src={img}
                       alt={`${product.name} view ${idx + 1}`}
-                      className="h-full w-full object-cover"
+                      fill
+                      sizes="100px"
+                      className="object-cover"
                     />
                   </button>
                 ))}

@@ -34,7 +34,7 @@ export function CheckoutPage() {
 
   return (
     <main className="min-h-screen bg-background py-12">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[98%] px-4 sm:px-6 lg:px-8">
         <Link
           href="/cart"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"

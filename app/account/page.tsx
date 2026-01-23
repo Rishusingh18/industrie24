@@ -20,7 +20,7 @@ export default async function AccountPage() {
     <>
       <Header />
       <main className="min-h-screen bg-background">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[98%] px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-4xl font-bold">My Account</h1>
             <SignOutButton />
