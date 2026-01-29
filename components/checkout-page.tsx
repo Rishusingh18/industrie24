@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,9 +11,22 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
 import { ArrowLeft, Lock } from "lucide-react"
+import { useCart } from "@/lib/cart-context"
+import { createClient } from "@/lib/supabase/client"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { useCurrency } from "@/lib/currency-context"
 
 export function CheckoutPage() {
+  const { cart, cartTotal, clearCart } = useCart()
+  const { formatPrice } = useCurrency()
+  const router = useRouter()
+  const supabase = createClient()
+
   const [currentStep, setCurrentStep] = useState("shipping")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [user, setUser] = useState<any>(null)
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -25,12 +38,78 @@ export function CheckoutPage() {
     country: "United States",
   })
 
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+      if (user) {
+        setFormData(prev => ({ ...prev, email: user.email || "" }))
+      }
+    })
+  }, [])
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const total = 1429.89
+  const handlePlaceOrder = async () => {
+    if (!user) {
+      toast.error("Please log in to place an order")
+      return
+    }
+
+    if (cart.length === 0) {
+      toast.error("Your cart is empty")
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      // 1. Create Order
+      const { data: orderData, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          user_id: user.id,
+          total_amount: cartTotal,
+          status: "Processing",
+          stripe_payment_intent_id: "mock_payment_id" // Placeholder
+        })
+        .select()
+        .single()
+
+      if (orderError) throw orderError
+
+      // 2. Create Order Items
+      const orderItems = cart.map(item => ({
+        order_id: orderData.id,
+        product_id: item.id,
+        quantity: item.quantity || 1,
+        price: item.price
+      }))
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(orderItems)
+
+      if (itemsError) throw itemsError
+
+      // 3. Clear Cart
+      clearCart()
+
+      toast.success("Order placed successfully!")
+      router.push("/account") // Redirect to account dashboard
+
+    } catch (error: any) {
+      console.error("Checkout error:", error)
+      toast.error("Failed to place order: " + error.message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const tax = cartTotal * 0.1 // 10% tax mock
+  const total = cartTotal + tax
 
   return (
     <main className="min-h-screen bg-background py-12">
@@ -230,8 +309,12 @@ export function CheckoutPage() {
                       </div>
                     </div>
 
-                    <Button className="w-full bg-accent hover:bg-accent/90 h-11 text-base">
-                      Place Order - ${total.toFixed(2)}
+                    <Button
+                      onClick={handlePlaceOrder}
+                      disabled={isSubmitting}
+                      className="w-full bg-accent hover:bg-accent/90 h-11 text-base"
+                    >
+                      {isSubmitting ? "Processing..." : `Place Order - ${formatPrice(total)}`}
                     </Button>
 
                     <p className="text-center text-xs text-muted-foreground">
@@ -252,12 +335,12 @@ export function CheckoutPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">1 Item</span>
-                    <span>$1299.99</span>
+                    <span className="text-muted-foreground">{cart.length} Items</span>
+                    <span>{formatPrice(cartTotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Tax</span>
-                    <span>$129.99</span>
+                    <span className="text-muted-foreground">Tax (10%)</span>
+                    <span>{formatPrice(tax)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Shipping</span>
@@ -267,7 +350,7 @@ export function CheckoutPage() {
                 <Separator />
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">${total.toFixed(2)}</span>
+                  <span className="text-primary">{formatPrice(total)}</span>
                 </div>
               </CardContent>
             </Card>

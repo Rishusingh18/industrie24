@@ -70,20 +70,20 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product, index) => (
-            <Link key={product.id} href={`/products/${product.id}`} className="group">
-              <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative">
-                {/* Wishlist Button - Top Right */}
-                <button
-                  onClick={(e) => toggleWishlist(e, product)}
-                  className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-white/80 hover:bg-white text-gray-700 transition-colors shadow-sm"
-                  aria-label="Add to wishlist"
-                >
-                  <Heart
-                    className={`h-6 w-6 transition-colors ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : "text-gray-600 hover:text-red-500"
-                      }`}
-                  />
-                </button>
+            <Card key={product.id} className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative group">
+              {/* Wishlist Button - Top Right */}
+              <button
+                onClick={(e) => toggleWishlist(e, product)}
+                className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-white/80 hover:bg-white text-gray-700 transition-colors shadow-sm"
+                aria-label="Add to wishlist"
+              >
+                <Heart
+                  className={`h-6 w-6 transition-colors ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : "text-gray-600 hover:text-red-500"
+                    }`}
+                />
+              </button>
 
+              <Link href={`/products/${product.id}`} className="block">
                 <div className="aspect-[4/3] overflow-hidden bg-muted relative">
                   <ImageWithFallback
                     src={product.image_url || "/placeholder.svg?height=300&width=300&query=industrial part"}
@@ -94,48 +94,50 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                     priority={index < 4}
                   />
                 </div>
-                <CardHeader className="p-4 pb-2">
+              </Link>
+              <CardHeader className="p-4 pb-2">
+                <Link href={`/products/${product.id}`} className="block">
                   <CardTitle className="line-clamp-1 text-base group-hover:text-teal-600 transition-colors">
                     {product.name}
                   </CardTitle>
                   <CardDescription className="line-clamp-1 text-xs">{product.category}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2 p-4 pt-0">
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-lg font-bold text-primary">
-                      <Price amount={product.price} />
-                    </span>
-                    <span
-                      className={`text-xs font-medium ${product.stock_quantity > 0 ? "text-green-600" : "text-red-600"}`}
-                    >
-                      {product.stock_quantity > 0 ? t("products.in_stock") : t("products.out_of_stock")}
-                    </span>
-                  </div>
-                  <div className="flex gap-2 mt-2">
-                    <Button
-                      size="sm"
-                      className={`w-full transition-all duration-300 ${addedToCart === product.id
-                        ? "bg-green-600 hover:bg-green-700 scale-105"
-                        : "bg-teal-600 hover:bg-teal-700"
-                        }`}
-                      onClick={(e) => handleAddToCart(e, product)}
-                    >
-                      {addedToCart === product.id ? (
-                        <>
-                          <Check className="h-4 w-4 mr-2 animate-bounce" />
-                          {t("products.added")}
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingCart className="h-4 w-4 mr-2" />
-                          {t("products.add_to_cart")}
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+                </Link>
+              </CardHeader>
+              <CardContent className="space-y-2 p-4 pt-0">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-lg font-bold text-primary">
+                    <Price amount={product.price} />
+                  </span>
+                  <span
+                    className={`text-xs font-medium ${product.stock_quantity > 0 ? "text-green-600" : "text-red-600"}`}
+                  >
+                    {product.stock_quantity > 0 ? t("products.in_stock") : t("products.out_of_stock")}
+                  </span>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    size="sm"
+                    className={`w-full transition-all duration-300 ${addedToCart === product.id
+                      ? "bg-green-600 hover:bg-green-700 scale-105"
+                      : "bg-teal-600 hover:bg-teal-700"
+                      }`}
+                    onClick={(e) => handleAddToCart(e, product)}
+                  >
+                    {addedToCart === product.id ? (
+                      <>
+                        <Check className="h-4 w-4 mr-2 animate-bounce" />
+                        {t("products.added")}
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        {t("products.add_to_cart")}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
 

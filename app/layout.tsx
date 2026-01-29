@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: "Industrie24 - Industrial Spare Parts & Components",
   description: "Your trusted source for high-quality industrial spare parts, bearings, pumps, motors and more",
   icons: {
-    icon: "/favicon.png",
+    icon: "/favicon.jpg",
   },
 }
 
