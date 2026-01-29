@@ -76,6 +76,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                 onClick={(e) => toggleWishlist(e, product)}
                 className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-white/80 hover:bg-white text-gray-700 transition-colors shadow-sm"
                 aria-label="Add to wishlist"
+                suppressHydrationWarning
               >
                 <Heart
                   className={`h-6 w-6 transition-colors ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : "text-gray-600 hover:text-red-500"
