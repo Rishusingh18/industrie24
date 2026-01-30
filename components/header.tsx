@@ -238,8 +238,8 @@ export function Header() {
           </nav>
 
           {/* Right Icons */}
-          <div className="flex items-center gap-4">
-            {/* Search Bar */}
+          <div className="flex items-center gap-2 sm:gap-2 md:gap-4">
+            {/* Search Bar (Desktop) */}
             <div className="hidden md:flex justify-end">
               <div className="flex items-center bg-gray-100 hover:bg-white focus-within:bg-white rounded-full px-4 border border-transparent hover:border-teal-200 focus-within:border-teal-500 focus-within:shadow-md transition-all duration-300 w-[360px] h-10 group">
                 <Search className="h-5 w-5 text-gray-600 group-focus-within:text-teal-600 transition-colors flex-shrink-0 mr-2" />
@@ -251,6 +251,13 @@ export function Header() {
                 />
               </div>
             </div>
+
+            {/* Mobile Search Icon */}
+            <Button variant="ghost" size="icon" className="md:hidden" asChild>
+              <Link href="/products">
+                <Search className="h-5 w-5" />
+              </Link>
+            </Button>
 
             {/* Contact & FAQ */}
             <div className="hidden md:flex items-center gap-4">
