@@ -124,7 +124,7 @@ export function Header() {
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <Image
               src="/file.svg"
-              alt="Industrie24 Logo"
+              alt="Unispare Logo"
               width={1024}
               height={524}
               className="h-20 w-auto scale-150 origin-left -ml-8"

@@ -1,9 +1,7 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
 import { ImageWithFallback } from "@/components/ui/image-with-fallback"
@@ -14,7 +12,6 @@ import { useCurrency } from "@/lib/currency-context"
 export function CartPage() {
   const { cart, removeFromCart, updateQuantity, cartTotal } = useCart()
   const { formatPrice } = useCurrency()
-  const [promoCode, setPromoCode] = useState("")
 
   const subtotal = cartTotal
   const tax = subtotal * 0.1
@@ -134,17 +131,6 @@ export function CartPage() {
                   <span className="text-primary">{formatPrice(total)}</span>
                 </div>
 
-                {/* Promo Code */}
-                <div className="pt-4 space-y-2">
-                  <label className="text-sm font-medium">Promo Code</label>
-                  <div className="flex gap-2">
-                    <Input placeholder="Enter code" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} />
-                    <Button variant="outline" size="sm">
-                      Apply
-                    </Button>
-                  </div>
-                </div>
-
                 <Link href="/checkout" className="w-full">
                   <Button className="w-full bg-accent hover:bg-accent/90 h-11 text-base">Proceed to Checkout</Button>
                 </Link>
@@ -156,7 +142,7 @@ export function CartPage() {
                 <CardTitle className="text-base">Shipping & Returns</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground space-y-2">
-                <p>Free shipping on orders over $100</p>
+                <p>Free shipping on orders over ₹10,000</p>
                 <p>30-day return policy</p>
                 <p>Secure payment with Stripe</p>
               </CardContent>

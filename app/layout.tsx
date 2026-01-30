@@ -12,7 +12,7 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Industrie24 - Industrial Spare Parts & Components",
+  title: "Unispare - Industrial Spare Parts & Components",
   description: "Your trusted source for high-quality industrial spare parts, bearings, pumps, motors and more",
   icons: {
     icon: "/favicon.jpg",

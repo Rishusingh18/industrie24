@@ -2,7 +2,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 
 export const metadata = {
-  title: "Payment Methods - Industrie24",
+  title: "Payment Methods - Unispare",
   description: "Payment methods and secure payment information",
 }
 

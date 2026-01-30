@@ -2,7 +2,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 
 export const metadata = {
-  title: "Request a Spare Part - Industrie24",
+  title: "Request a Spare Part - Unispare",
   description: "Request spare parts that are not listed in our catalog",
 }
 

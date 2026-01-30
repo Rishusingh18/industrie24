@@ -2,7 +2,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 
 export const metadata = {
-  title: "Returns Policy - Industrie24",
+  title: "Returns Policy - Unispare",
   description: "Returns and refund policy information",
 }
 
@@ -38,7 +38,7 @@ export default function ReturnsPage() {
             <div className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Return Shipping Costs</h2>
               <p className="text-gray-600">
-                Return shipping costs are covered by Industrie24 for returns due to defective or damaged items. For
+                Return shipping costs are covered by Unispare for returns due to defective or damaged items. For
                 other returns, customers are responsible for return shipping costs.
               </p>
             </div>

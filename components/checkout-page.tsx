@@ -38,11 +38,73 @@ export function CheckoutPage() {
     country: "United States",
   })
 
+  // Billing state
+  const [billingData, setBillingData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    address: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "United States",
+  })
+  const [sameAsShipping, setSameAsShipping] = useState(true)
+
+  // Sync billing with shipping when checked
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    if (sameAsShipping) {
+      setBillingData(prev => ({
+        ...prev,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zipCode: formData.zipCode,
+        country: formData.country
+      }))
+    }
+  }, [sameAsShipping, formData])
+
+  // Handle billing input change
+  const handleBillingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setBillingData(prev => ({ ...prev, [name]: value }))
+  }
+
+  // Fetch user data
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       setUser(user)
       if (user) {
-        setFormData(prev => ({ ...prev, email: user.email || "" }))
+        // Fetch profile data
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+
+        const metadata = user.user_metadata || {}
+
+        // Combine profile data (DB) and metadata (Auth)
+        const firstName = (profile?.full_name || metadata.full_name || "").split(" ")[0] || ""
+        const lastName = (profile?.full_name || metadata.full_name || "").split(" ").slice(1).join(" ") || ""
+
+        setFormData(prev => ({
+          ...prev,
+          email: user.email || "",
+          // Address from profile DB (source of truth for street)
+          address: profile?.address || prev.address,
+          // Extended fields from metadata
+          city: metadata.city || prev.city,
+          state: metadata.state || prev.state,
+          zipCode: metadata.zip_code || prev.zipCode,
+          firstName: firstName || prev.firstName,
+          lastName: lastName || prev.lastName,
+          // phone: profile?.phone || prev.phone
+        }))
       }
     })
   }, [])
@@ -50,6 +112,13 @@ export function CheckoutPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  // Generate a random Order ID (e.g., ORD-2024-1234)
+  const generateOrderId = () => {
+    const year = new Date().getFullYear()
+    const random = Math.floor(1000 + Math.random() * 9000)
+    return `ORD-${year}-${random}`
   }
 
   const handlePlaceOrder = async () => {
@@ -66,14 +135,23 @@ export function CheckoutPage() {
     setIsSubmitting(true)
 
     try {
-      // 1. Create Order
+      const orderId = generateOrderId()
+
+      // Prepare full address snapshots
+      const shippingAddressSnapshot = formData
+      const billingAddressSnapshot = sameAsShipping ? formData : billingData
+
+      // 1. Create Order with snapshots
       const { data: orderData, error: orderError } = await supabase
         .from("orders")
         .insert({
           user_id: user.id,
           total_amount: cartTotal,
-          status: "Processing",
-          stripe_payment_intent_id: "mock_payment_id" // Placeholder
+          status: "Pending",
+          order_id: orderId,
+          shipping_address: shippingAddressSnapshot,
+          billing_address: billingAddressSnapshot,
+          stripe_payment_intent_id: "whatsapp_pending"
         })
         .select()
         .single()
@@ -97,12 +175,45 @@ export function CheckoutPage() {
       // 3. Clear Cart
       clearCart()
 
+      // 4. WhatsApp Redirection
+      const phoneNumber = "919718889253" // +91 97188 89253
+
+      // Format items list for message
+      const itemsList = cart.map(item =>
+        `- ${item.name} (x${item.quantity})`
+      ).join("\n")
+
+      const message = encodeURIComponent(
+        `*New Order Placed!* 🛍️
+Order ID: ${orderId}
+
+*Items:*
+${itemsList}
+
+*Total:* ${formatPrice(total)}
+
+*Customer Details:*
+Name: ${shippingAddressSnapshot.firstName} ${shippingAddressSnapshot.lastName}
+Email: ${shippingAddressSnapshot.email}
+Address: ${shippingAddressSnapshot.address}, ${shippingAddressSnapshot.city}, ${shippingAddressSnapshot.state}, ${shippingAddressSnapshot.zipCode}
+
+I would like to proceed with this order.`
+      )
+
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`
+
+      // Open WhatsApp in new tab
+      window.open(whatsappUrl, '_blank')
+
       toast.success("Order placed successfully!")
-      router.push("/account") // Redirect to account dashboard
+      router.push(`/order-confirmation?id=${orderId}`)
 
     } catch (error: any) {
-      console.error("Checkout error:", error)
-      toast.error("Failed to place order: " + error.message)
+      console.error("Checkout error:", JSON.stringify(error, null, 2))
+      if (error?.message) {
+        console.error("Error message:", error.message);
+      }
+      toast.error("Failed to place order: " + (error?.message || "Unknown error"))
     } finally {
       setIsSubmitting(false)
     }
@@ -128,10 +239,9 @@ export function CheckoutPage() {
           {/* Checkout Form */}
           <div className="lg:col-span-2">
             <Tabs value={currentStep} onValueChange={setCurrentStep}>
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="shipping">Shipping</TabsTrigger>
                 <TabsTrigger value="billing">Billing</TabsTrigger>
-                <TabsTrigger value="payment">Payment</TabsTrigger>
               </TabsList>
 
               {/* Shipping Tab */}
@@ -235,8 +345,13 @@ export function CheckoutPage() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="rounded-lg bg-muted p-4">
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" defaultChecked className="h-4 w-4" />
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={sameAsShipping}
+                          onChange={(e) => setSameAsShipping(e.target.checked)}
+                          className="h-4 w-4 rounded border-gray-300"
+                        />
                         <span className="text-sm">Same as shipping address</span>
                       </label>
                     </div>
@@ -244,85 +359,81 @@ export function CheckoutPage() {
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label>First Name</Label>
-                        <Input placeholder="John" />
+                        <Input
+                          name="firstName"
+                          value={billingData.firstName}
+                          onChange={handleBillingChange}
+                          placeholder="John"
+                          disabled={sameAsShipping}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label>Last Name</Label>
-                        <Input placeholder="Doe" />
+                        <Input
+                          name="lastName"
+                          value={billingData.lastName}
+                          onChange={handleBillingChange}
+                          placeholder="Doe"
+                          disabled={sameAsShipping}
+                        />
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <Label>Street Address</Label>
-                      <Input placeholder="123 Main Street" />
+                      <Input
+                        name="address"
+                        value={billingData.address}
+                        onChange={handleBillingChange}
+                        placeholder="123 Main Street"
+                        disabled={sameAsShipping}
+                      />
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-3">
                       <div className="space-y-2">
                         <Label>City</Label>
-                        <Input placeholder="New York" />
+                        <Input
+                          name="city"
+                          value={billingData.city}
+                          onChange={handleBillingChange}
+                          placeholder="New York"
+                          disabled={sameAsShipping}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label>State</Label>
-                        <Input placeholder="NY" />
+                        <Input
+                          name="state"
+                          value={billingData.state}
+                          onChange={handleBillingChange}
+                          placeholder="NY"
+                          disabled={sameAsShipping}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label>ZIP Code</Label>
-                        <Input placeholder="10001" />
-                      </div>
-                    </div>
-
-                    <Button onClick={() => setCurrentStep("payment")} className="w-full">
-                      Continue to Payment
-                    </Button>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Payment Tab */}
-              <TabsContent value="payment" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Lock className="h-5 w-5" />
-                      Payment Information
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 p-4 text-sm text-blue-700 dark:text-blue-400">
-                      This is a demo checkout. In production, this would connect to Stripe for payment processing.
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="card">Card Number</Label>
-                      <Input id="card" placeholder="4242 4242 4242 4242" />
-                    </div>
-
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="expiry">Expiry Date</Label>
-                        <Input id="expiry" placeholder="MM/YY" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="cvc">CVC</Label>
-                        <Input id="cvc" placeholder="123" />
+                        <Input
+                          name="zipCode"
+                          value={billingData.zipCode}
+                          onChange={handleBillingChange}
+                          placeholder="10001"
+                          disabled={sameAsShipping}
+                        />
                       </div>
                     </div>
 
                     <Button
                       onClick={handlePlaceOrder}
                       disabled={isSubmitting}
-                      className="w-full bg-accent hover:bg-accent/90 h-11 text-base"
+                      className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white"
                     >
-                      {isSubmitting ? "Processing..." : `Place Order - ${formatPrice(total)}`}
+                      {isSubmitting ? "Processing..." : `Place Order & Chat on WhatsApp - ${formatPrice(total)}`}
                     </Button>
-
-                    <p className="text-center text-xs text-muted-foreground">
-                      Your payment information is secure and encrypted.
-                    </p>
                   </CardContent>
                 </Card>
               </TabsContent>
+
             </Tabs>
           </div>
 

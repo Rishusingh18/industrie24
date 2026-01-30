@@ -87,7 +87,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t pt-8">
-          <p className="text-center text-sm text-muted-foreground">© 2025 Industrie24. All rights reserved.</p>
+          <p className="text-center text-sm text-muted-foreground">© 2025 Unispare. All rights reserved.</p>
         </div>
       </div>
     </footer>

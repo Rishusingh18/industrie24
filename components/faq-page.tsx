@@ -23,7 +23,7 @@ const faqs = [
     category: "Ordering",
     question: "Can I place a bulk order?",
     answer:
-      "Yes! We offer special pricing for bulk orders. Please contact our sales team directly at sales@industrie24.com or call +1 (555) 123-4567 for a custom quote.",
+      "Yes! We offer special pricing for bulk orders. Please contact our sales team directly at sales@unispare.com or call +1 (555) 123-4567 for a custom quote.",
   },
   {
     id: "faq-4",
@@ -72,7 +72,7 @@ const faqs = [
     category: "Products",
     question: "Are your products genuine?",
     answer:
-      "Yes, all products sold on Industrie24 are 100% genuine and sourced directly from manufacturers or authorized distributors. We stand behind the quality and authenticity of every item.",
+      "Yes, all products sold on Unispare are 100% genuine and sourced directly from manufacturers or authorized distributors. We stand behind the quality and authenticity of every item.",
   },
   {
     id: "faq-11",

@@ -3,7 +3,7 @@ import { Footer } from "@/components/footer"
 import Link from "next/link"
 
 export const metadata = {
-  title: "Manufacturers - Industrie24",
+  title: "Manufacturers - Unispare",
   description: "Browse industrial equipment manufacturers and suppliers",
 }
 

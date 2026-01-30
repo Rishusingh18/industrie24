@@ -2,8 +2,8 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 
 export const metadata = {
-  title: "Reviews - Industrie24",
-  description: "Customer reviews and testimonials for Industrie24",
+  title: "Reviews - Unispare",
+  description: "Customer reviews and testimonials for Unispare",
 }
 
 export default function ReviewsPage() {
@@ -23,7 +23,7 @@ export default function ReviewsPage() {
       company: "Manufacturing Works",
       rating: 5,
       title: "Reliable Partner",
-      content: "We've been ordering from Industrie24 for 3 years. Always reliable and professional.",
+      content: "We've been ordering from Unispare for 3 years. Always reliable and professional.",
       date: "2024-01-10",
     },
     {
@@ -52,7 +52,7 @@ export default function ReviewsPage() {
       <main className="min-h-screen bg-gray-50">
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Customer Reviews</h1>
-          <p className="text-gray-600 mb-12">See what our customers say about Industrie24</p>
+          <p className="text-gray-600 mb-12">See what our customers say about Unispare</p>
 
           <div className="space-y-6">
             {reviews.map((review) => (

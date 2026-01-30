@@ -2,7 +2,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 
 export const metadata = {
-  title: "Industrial Purchase - Industrie24",
+  title: "Industrial Purchase - Unispare",
   description: "Bulk and wholesale purchasing solutions for industrial companies",
 }
 
