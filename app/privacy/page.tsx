@@ -17,6 +17,28 @@ export default function PrivacyPage() {
                     This Privacy Policy document contains types of information that is collected and recorded by Unispare and how we use it.
                 </p>
 
+                <h2 className="text-2xl font-semibold mt-8 mb-4">Google User Data</h2>
+                <p className="mb-4">
+                    If you choose to sign in using your Google account ("Google Auth"), Unispare accesses certain personal information from your Google profile, specifically:
+                </p>
+                <ul className="list-disc pl-6 mb-4 space-y-2">
+                    <li>Your name</li>
+                    <li>Your email address</li>
+                    <li>Your profile picture</li>
+                </ul>
+                <p className="mb-4">
+                    We use this data solely for the purpose of:
+                </p>
+                <ul className="list-disc pl-6 mb-4 space-y-2">
+                    <li>Creating and managing your user account on Unispare.</li>
+                    <li>Authenticating your identity to provide secure access to our services.</li>
+                    <li>Displaying your profile information within your account dashboard.</li>
+                </ul>
+                <p className="mb-6">
+                    Unispare stores this data securely in our database. We do not share your Google user data with any third parties, except as required by law.
+                    Our use of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Google API Services User Data Policy</a>, including the Limited Use requirements.
+                </p>
+
                 <h2 className="text-2xl font-semibold mt-8 mb-4">Log Files</h2>
                 <p className="mb-4">
                     Unispare follows a standard procedure of using log files. These files log visitors when they visit websites.
@@ -62,6 +84,6 @@ export default function PrivacyPage() {
                     By using our website, you hereby consent to our Privacy Policy and agree to its Terms and Conditions.
                 </p>
             </div>
-        </div>
+        </div >
     )
 }
