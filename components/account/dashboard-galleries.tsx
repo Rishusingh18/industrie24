@@ -7,7 +7,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/lib/cart-context"
 // ScrollArea removed as it was unused and causing lint errors
-import Image from "next/image"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 
@@ -34,15 +34,15 @@ export function DashboardGalleries() {
                 const { data, error } = await supabase
                     .from("orders")
                     .select(`
-                        id,
-                        status,
-                        created_at,
-                        order_items (
-                            products (
-                                image_url
-                            )
-                        )
-                    `)
+id,
+    status,
+    created_at,
+    order_items(
+        products(
+            image_url
+        )
+    )
+        `)
                     .eq("user_id", user.id)
                     .order("created_at", { ascending: false })
                     .limit(5)
@@ -84,12 +84,12 @@ export function DashboardGalleries() {
                     ) : orders.length > 0 ? (
                         <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
                             {orders.map((order) => (
-                                <div key={order.id} className="min-w-[80px] h-20 bg-gray-100 rounded-md flex items-center justify-center relative border overflow-hidden flex-col gap-1 p-1">
-                                    <div className="flex -space-x-2 justify-center w-full h-full items-center">
+                                <div key={order.id} className="min-w-[160px] h-40 bg-gray-100 rounded-md flex items-center justify-center relative overflow-hidden flex-col gap-1 p-1">
+                                    <div className="flex gap-2 justify-center w-full h-full items-center">
                                         {order.order_items?.slice(0, 2).map((item: any, idx: number) => (
-                                            <div key={idx} className="relative w-10 h-10 rounded-full border border-white bg-white overflow-hidden shadow-sm">
-                                                <Image
-                                                    src={item.products?.image_url || "/file.svg"}
+                                            <div key={idx} className="relative w-24 h-24 rounded-md overflow-hidden">
+                                                <ImageWithFallback
+                                                    src={item.products?.image_url || "/placeholder.svg"}
                                                     alt="Order Item"
                                                     fill
                                                     className="object-cover"
@@ -137,9 +137,9 @@ export function DashboardGalleries() {
                             {wishlist.length > 0 ? (
                                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                                     {wishlist.slice(0, 4).map((item) => (
-                                        <div key={item.id} className="relative h-16 w-16 min-w-[64px] rounded border bg-white overflow-hidden">
-                                            <Image
-                                                src={item.image_url || "/file.svg"}
+                                        <div key={item.id} className="relative h-24 w-24 min-w-[96px] rounded border bg-white overflow-hidden">
+                                            <ImageWithFallback
+                                                src={item.image_url || "/placeholder.svg"}
                                                 alt={item.name}
                                                 fill
                                                 className="object-contain p-1"
@@ -147,7 +147,7 @@ export function DashboardGalleries() {
                                         </div>
                                     ))}
                                     {wishlist.length > 4 && (
-                                        <div className="h-16 w-16 min-w-[64px] rounded border bg-gray-50 flex items-center justify-center text-xs text-gray-500">
+                                        <div className="h-24 w-24 min-w-[96px] rounded border bg-gray-50 flex items-center justify-center text-sm text-gray-500">
                                             +{wishlist.length - 4}
                                         </div>
                                     )}
@@ -173,9 +173,9 @@ export function DashboardGalleries() {
                             {cart.length > 0 ? (
                                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                                     {cart.slice(0, 4).map((item) => (
-                                        <div key={item.id} className="relative h-16 w-16 min-w-[64px] rounded border bg-white overflow-hidden">
-                                            <Image
-                                                src={item.image_url || "/file.svg"}
+                                        <div key={item.id} className="relative h-24 w-24 min-w-[96px] rounded border bg-white overflow-hidden">
+                                            <ImageWithFallback
+                                                src={item.image_url || "/placeholder.svg"}
                                                 alt={item.name}
                                                 fill
                                                 className="object-contain p-1"
@@ -186,7 +186,7 @@ export function DashboardGalleries() {
                                         </div>
                                     ))}
                                     {cart.length > 4 && (
-                                        <div className="h-16 w-16 min-w-[64px] rounded border bg-gray-50 flex items-center justify-center text-xs text-gray-500">
+                                        <div className="h-24 w-24 min-w-[96px] rounded border bg-gray-50 flex items-center justify-center text-sm text-gray-500">
                                             +{cart.length - 4}
                                         </div>
                                     )}
@@ -198,6 +198,6 @@ export function DashboardGalleries() {
                     </Card>
                 </Link>
             </div>
-        </div>
+        </div >
     )
 }

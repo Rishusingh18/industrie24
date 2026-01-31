@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import Image from "next/image"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import { useRouter } from "next/navigation"
 import { PackageOpen, ArrowLeft, Calendar, FileText, MapPin, ChevronDown, ChevronUp, Search, Truck, CheckCircle2, RotateCcw, XCircle, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -294,8 +294,8 @@ export default function OrdersPage() {
                                             {/* Image */}
                                             <div className="shrink-0 flex justify-center sm:block">
                                                 <Link href={`/products/${item.products?.id}`}>
-                                                    <div className="relative h-24 w-24 sm:h-28 sm:w-28 flex-shrink-0">
-                                                        <Image
+                                                    <div className="relative h-32 w-32 sm:h-40 sm:w-40 flex-shrink-0">
+                                                        <ImageWithFallback
                                                             src={item.products?.image_url || "/placeholder.svg"}
                                                             alt={item.products?.name || "Product"}
                                                             fill
