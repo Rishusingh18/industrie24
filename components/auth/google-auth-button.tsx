@@ -20,11 +20,7 @@ export default function GoogleAuthButton({ nextUrl = "/" }: { nextUrl?: string }
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                    redirectTo: `https://unispare.in/auth/callback?next=${nextUrl}`,
-                    queryParams: {
-                        access_type: 'offline',
-                        prompt: 'consent',
-                    },
+                    redirectTo: 'https://unispare.in/auth/callback',
                 },
             });
 
