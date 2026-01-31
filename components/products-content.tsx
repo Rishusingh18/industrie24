@@ -20,13 +20,14 @@ interface ProductsContentProps {
 export function ProductsContent({ initialProducts, totalProducts = 0, currentPage = 1 }: ProductsContentProps) {
   const searchParams = useSearchParams()
   const categoryParam = searchParams.get("category")
+  const searchParam = searchParams.get("search")
 
   // We rely on server for main filtering now, local search is still useful for small sets 
   // but might be confusing if pagination exists. Ideally search should also be server side.
   // For now let's keep local filtering on the CURRENT PAGE data only, which is the standard behavior for mixed modes.
 
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(initialProducts)
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState(searchParam || "")
   const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryParam)
 
   useEffect(() => {
@@ -38,11 +39,14 @@ export function ProductsContent({ initialProducts, totalProducts = 0, currentPag
   useEffect(() => {
     let filtered = initialProducts
     if (searchQuery) {
+      const query = searchQuery.toLowerCase()
       filtered = filtered.filter(
         (p) =>
-          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          (p.product_type && p.product_type.toLowerCase().includes(searchQuery.toLowerCase())),
+          p.name.toLowerCase().includes(query) ||
+          (p.description && p.description.toLowerCase().includes(query)) ||
+          (p.product_type && p.product_type.toLowerCase().includes(query)) ||
+          (p.company_name && p.company_name.toLowerCase().includes(query)) ||
+          (p.sku && p.sku.toLowerCase().includes(query)),
       )
     }
     setFilteredProducts(filtered)
@@ -51,7 +55,10 @@ export function ProductsContent({ initialProducts, totalProducts = 0, currentPag
   // Sync state with URL params
   useEffect(() => {
     setSelectedCategory(categoryParam)
-  }, [categoryParam])
+    if (searchParam !== null) {
+      setSearchQuery(searchParam)
+    }
+  }, [categoryParam, searchParam])
 
   const router = useRouter()
 

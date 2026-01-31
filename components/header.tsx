@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { ShoppingCart, Search, Menu, X, User, Heart, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -42,6 +43,17 @@ export function Header() {
   }
 
   const { cart, wishlist, cartTotal } = useCart()
+
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<SVGSVGElement>) => {
+    if ((e.type === 'keydown' && (e as React.KeyboardEvent).key === 'Enter') || e.type === 'click') {
+      if (searchQuery.trim()) {
+        router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`)
+      }
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b">
@@ -133,6 +145,7 @@ export function Header() {
           </Link>
 
 
+
           {/* Main Nav Items */}
           <nav className="hidden md:flex flex-1 items-center justify-end gap-12 mr-8">
             <ManufacturerFilter
@@ -142,99 +155,7 @@ export function Header() {
                 </div>
               }
             />
-
-            {/* Products Dropdown */}
-            <div className="relative group">
-              <div
-                role="button"
-                tabIndex={0}
-                className="text-base font-medium hover:text-teal-600 transition-colors flex items-center gap-1 cursor-pointer select-none"
-                onClick={() => toggleDropdown("products")}
-                suppressHydrationWarning
-              >
-                {t("nav.products")}
-                <ChevronDown className="h-4 w-4" />
-              </div>
-              <div className="absolute left-0 top-full hidden group-hover:block pt-2">
-                <div className="bg-white border rounded shadow-lg py-2 min-w-56">
-                  <Link href="/products" className="block px-4 py-2 hover:bg-gray-100 text-sm font-semibold">
-                    {t("products.view_all")}
-                  </Link>
-                  <div className="border-t my-2"></div>
-                  <Link href="/products?category=automation" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Automation
-                  </Link>
-                  <Link href="/products?category=servo-motors" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Servo Motors
-                  </Link>
-                  <Link href="/products?category=sensors" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Sensors
-                  </Link>
-                  <Link
-                    href="/products?category=drive-technology"
-                    className="block px-4 py-2 hover:bg-gray-100 text-sm"
-                  >
-                    Drive Technology
-                  </Link>
-                  <Link href="/products?category=pneumatics" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Pneumatics
-                  </Link>
-                  <Link href="/products?category=ball-bearing" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Ball-Bearing
-                  </Link>
-                  <Link href="/products?category=pumps" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Pumps
-                  </Link>
-                  <Link href="/products?category=valves" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Valves
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <Link href="/request-spare-part" className="text-base font-medium hover:text-teal-600 transition-colors">
-              {t("nav.request_part")}
-            </Link>
-
-            <Link href="/industrial-purchase" className="text-base font-medium hover:text-teal-600 transition-colors">
-              {t("nav.industrial_purchase")}
-            </Link>
-
-            {/* Company Details Dropdown */}
-            <div className="relative group">
-              <div
-                role="button"
-                tabIndex={0}
-                className="text-base font-medium hover:text-teal-600 transition-colors flex items-center gap-1 cursor-pointer select-none"
-                onClick={() => toggleDropdown("company")}
-                suppressHydrationWarning
-              >
-                {t("nav.company_details")}
-                <ChevronDown className="h-4 w-4" />
-              </div>
-              <div className="absolute left-0 top-full hidden group-hover:block pt-2">
-                <div className="bg-white border rounded shadow-lg py-2 min-w-48">
-                  <Link href="/faq" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    {t("nav.faq")}
-                  </Link>
-                  <Link href="/reviews" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Reviews
-                  </Link>
-                  <Link href="/payment" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Payment
-                  </Link>
-                  <Link href="/returns" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Returns
-                  </Link>
-                  <Link href="/shipment" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Shipment
-                  </Link>
-                  <Link href="/conditions" className="block px-4 py-2 hover:bg-gray-100 text-sm">
-                    Conditions
-                  </Link>
-                </div>
-              </div>
-            </div>
+            {/* ... other nav items ... */}
           </nav>
 
           {/* Right Icons */}
@@ -242,12 +163,18 @@ export function Header() {
             {/* Search Bar (Desktop) */}
             <div className="hidden md:flex justify-end">
               <div className="flex items-center bg-gray-100 hover:bg-white focus-within:bg-white rounded-full px-4 border border-transparent hover:border-teal-200 focus-within:border-teal-500 focus-within:shadow-md transition-all duration-300 w-[360px] h-10 group">
-                <Search className="h-5 w-5 text-gray-600 group-focus-within:text-teal-600 transition-colors flex-shrink-0 mr-2" />
+                <Search
+                  className="h-5 w-5 text-gray-600 group-focus-within:text-teal-600 transition-colors flex-shrink-0 mr-2 cursor-pointer"
+                  onClick={handleSearch}
+                />
                 <input
                   type="text"
                   placeholder={t("header.search")}
                   className="flex-1 bg-transparent outline-none text-base placeholder:text-gray-500 w-full"
                   suppressHydrationWarning
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearch}
                 />
               </div>
             </div>

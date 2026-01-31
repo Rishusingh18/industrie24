@@ -70,11 +70,11 @@ export function DashboardGalleries() {
                 onClick={() => router.push('/orders')}
             >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <div className="flex items-center gap-2">
-                        <ShoppingBag className="h-5 w-5 text-teal-600" />
+                    <div className="flex items-center gap-3">
+                        <ShoppingBag className="h-7 w-7 text-teal-600" />
                         <CardTitle className="text-lg">My Orders</CardTitle>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                    <span className="text-sm font-bold text-teal-600 hover:underline">View All</span>
                 </CardHeader>
                 <CardContent>
                     {isLoading ? (
@@ -85,10 +85,9 @@ export function DashboardGalleries() {
                         <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
                             {orders.map((order) => (
                                 <div key={order.id} className="min-w-[80px] h-20 bg-gray-100 rounded-md flex items-center justify-center relative border overflow-hidden flex-col gap-1 p-1">
-                                    <p className="text-[10px] text-gray-500 font-mono">#{order.id}</p>
-                                    <div className="flex -space-x-2 justify-center">
+                                    <div className="flex -space-x-2 justify-center w-full h-full items-center">
                                         {order.order_items?.slice(0, 2).map((item: any, idx: number) => (
-                                            <div key={idx} className="relative w-8 h-8 rounded-full border border-white bg-white overflow-hidden shadow-sm">
+                                            <div key={idx} className="relative w-10 h-10 rounded-full border border-white bg-white overflow-hidden shadow-sm">
                                                 <Image
                                                     src={item.products?.image_url || "/file.svg"}
                                                     alt="Order Item"
@@ -100,9 +99,6 @@ export function DashboardGalleries() {
                                     </div>
                                 </div>
                             ))}
-                            <div className="min-w-[80px] h-20 bg-gray-50 rounded-md flex items-center justify-center border border-dashed border-gray-300">
-                                <span className="text-xs text-gray-400">View All</span>
-                            </div>
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center py-8 text-center bg-accent/5 rounded-lg border border-dashed border-border/50">
@@ -131,8 +127,8 @@ export function DashboardGalleries() {
                 <Link href="/wishlist" className="block h-full">
                     <Card className="cursor-pointer hover:shadow-md transition-shadow h-full">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <div className="flex items-center gap-2">
-                                <Heart className="h-5 w-5 text-red-600" />
+                            <div className="flex items-center gap-3">
+                                <Heart className="h-7 w-7 text-red-600" />
                                 <CardTitle className="text-lg">Wishlist</CardTitle>
                             </div>
                             <ChevronRight className="h-5 w-5 text-gray-400" />
@@ -167,8 +163,8 @@ export function DashboardGalleries() {
                 <Link href="/cart" className="block h-full">
                     <Card className="cursor-pointer hover:shadow-md transition-shadow h-full">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <div className="flex items-center gap-2">
-                                <ShoppingCart className="h-5 w-5 text-teal-600" />
+                            <div className="flex items-center gap-3">
+                                <ShoppingCart className="h-7 w-7 text-teal-600" />
                                 <CardTitle className="text-lg">My Cart</CardTitle>
                             </div>
                             <ChevronRight className="h-5 w-5 text-gray-400" />
