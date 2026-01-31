@@ -37,16 +37,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // 1. Check for user session
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user)
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser(session.user)
+      } else {
+        setUser(null)
+        // Clear cart and wishlist if user logs out
+        setCart([])
+        setWishlist([])
+        localStorage.removeItem("cart")
+        localStorage.removeItem("wishlist")
+      }
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
+    // Initial check for session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user)
+      }
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabase])
 
   // 2. Fetch data
   useEffect(() => {

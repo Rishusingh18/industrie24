@@ -6,14 +6,9 @@ import { ShoppingBag, Heart, ShoppingCart, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/lib/cart-context"
-// ScrollArea removed as it was unused and causing lint errors
 import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
-
-// Mock data for orders since we don't have an order context yet
-// Mock data removed
-// Real data fetching implemented inside component
 
 export function DashboardGalleries() {
     const router = useRouter()
@@ -22,45 +17,6 @@ export function DashboardGalleries() {
     const [isLoading, setIsLoading] = useState(true)
     const supabase = createClient()
 
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const { data: { user } } = await supabase.auth.getUser()
-                if (!user) {
-                    setIsLoading(false)
-                    return
-                }
-
-                const { data, error } = await supabase
-                    .from("orders")
-                    .select(`
-id,
-    status,
-    created_at,
-    order_items(
-        products(
-            image_url
-        )
-    )
-        `)
-                    .eq("user_id", user.id)
-                    .order("created_at", { ascending: false })
-                    .limit(5)
-
-                if (error) {
-                    console.error("Error fetching orders:", JSON.stringify(error, null, 2))
-                } else {
-                    setOrders(data || [])
-                }
-            } catch (error) {
-                console.error("Failed to fetch orders", error)
-            } finally {
-                setIsLoading(false)
-            }
-        }
-
-        fetchOrders()
-    }, [])
 
     return (
         <div className="space-y-6">
@@ -84,15 +40,15 @@ id,
                     ) : orders.length > 0 ? (
                         <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
                             {orders.map((order) => (
-                                <div key={order.id} className="min-w-[160px] h-40 bg-gray-100 rounded-md flex items-center justify-center relative overflow-hidden flex-col gap-1 p-1">
+                                <div key={order.id} className="min-w-[160px] h-40 bg-white border rounded-lg flex items-center justify-center relative overflow-hidden flex-col gap-1 p-2 hover:border-teal-500 transition-colors">
                                     <div className="flex gap-2 justify-center w-full h-full items-center">
                                         {order.order_items?.slice(0, 2).map((item: any, idx: number) => (
-                                            <div key={idx} className="relative w-24 h-24 rounded-md overflow-hidden">
+                                            <div key={idx} className="relative w-24 h-24 rounded-md overflow-hidden bg-gray-50/50">
                                                 <ImageWithFallback
                                                     src={item.products?.image_url || "/placeholder.svg"}
                                                     alt="Order Item"
                                                     fill
-                                                    className="object-cover"
+                                                    className="object-contain p-1"
                                                 />
                                             </div>
                                         ))}
@@ -198,6 +154,6 @@ id,
                     </Card>
                 </Link>
             </div>
-        </div >
+        </div>
     )
 }
