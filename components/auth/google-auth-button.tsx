@@ -9,24 +9,21 @@ import { toast } from "sonner";
 export default function GoogleAuthButton({ nextUrl = "/" }: { nextUrl?: string }) {
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleGoogleLogin = async () => {
+    const handleGoogleLogin = () => {
         try {
             setIsLoading(true);
-            const supabase = createBrowserClient(
-                process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-            );
+            const clientId = "583788899856-9893m50a904lmbqldf3ao2a0tgmjqokp.apps.googleusercontent.com";
+            const redirectUri = "https://unispare.in/auth/callback";
+            const scope = "openid email profile";
+            const responseType = "code";
 
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: 'https://unispare.in/auth/callback',
-                },
-            });
+            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                `client_id=${clientId}&` +
+                `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+                `response_type=${responseType}&` +
+                `scope=${encodeURIComponent(scope)}`;
 
-            if (error) {
-                throw error;
-            }
+            window.location.href = authUrl;
         } catch (error) {
             toast.error("Error signing in with Google");
             console.error("Error signing in with Google:", error);
