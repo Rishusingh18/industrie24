@@ -3,6 +3,9 @@ import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero-section"
 import { FeaturedProducts } from "@/components/featured-products"
 import { Footer } from "@/components/footer"
+import { Suspense } from "react"
+import { Skeleton } from "@/components/ui/skeleton"
+import { ProductGridSkeleton } from "@/components/product-skeleton"
 
 
 export const revalidate = 60 // Revalidate every 60 seconds
@@ -23,7 +26,17 @@ export default async function Home() {
     <>
       <Header />
       <HeroSection />
-      <FeaturedProducts products={products} />
+      <Suspense fallback={
+        <div className="container py-8 space-y-8">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+          <ProductGridSkeleton count={4} />
+        </div>
+      }>
+        <FeaturedProducts products={products} />
+      </Suspense>
       <Footer />
     </>
   )

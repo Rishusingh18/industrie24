@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { ProductsContent } from "@/components/products-content"
+import { ProductGridSkeleton } from "@/components/product-skeleton"
+import { Skeleton } from "@/components/ui/skeleton"
 import type { Product } from "@/lib/types"
 
 export const dynamic = "force-dynamic"
@@ -90,7 +92,18 @@ export default async function ProductsPage(props: {
   return (
     <>
       <Header />
-      <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <Suspense fallback={
+        <div className="mx-auto max-w-[98%] px-4 py-8 sm:px-6 lg:px-8">
+          <div className="mb-8 space-y-4">
+            <Skeleton className="h-10 w-full max-w-sm rounded-md" />
+            <div className="flex gap-2">
+              <Skeleton className="h-6 w-24 rounded-full" />
+              <Skeleton className="h-6 w-24 rounded-full" />
+            </div>
+          </div>
+          <ProductGridSkeleton count={12} />
+        </div>
+      }>
         <ProductsServer category={searchParams.category} page={page} search={searchParams.search} />
       </Suspense>
       <Footer />
